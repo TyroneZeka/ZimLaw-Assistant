@@ -1,0 +1,11 @@
+langchain
+langchain-community
+ollama
+llama-index  # Optional: if you want to compare with LlamaIndex
+streamlit
+faiss-cpu
+sentence-transformers
+pymupdf  # for PDF extraction (fitz)
+beautifulsoup4  # for HTML scraping
+requests  # for HTTP requests
+python-dotenv  # if using environment variables

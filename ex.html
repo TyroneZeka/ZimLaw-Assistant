@@ -1,0 +1,2906 @@
+<form method="get" id="filter-form" data-component="DocumentFilterForm" hx-include="#filter-form" hx-indicator=".htmx-progress" hx-target="#filter-form" hx-swap="outerHTML">
+  <div class="d-block d-md-none my-2">
+    <a class="btn btn-primary" href="#document-list-filters-offcanvas" data-bs-toggle="offcanvas" aria-controls="document-list-filters-offcanvas">
+      Filters
+    </a>
+  </div>
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="document-list-filters-offcanvas" aria-labelledby="document-list-filters-offcanvas-title">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body"></div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3 d-none d-lg-block document-list-facets-wrapper pocketlaw-hidden">
+      <div class="document-list-facets">
+        
+        <ul class="list-group ">
+          <li class="position-relative list-group-item bg-light d-flex justify-content-between align-items-center">
+            <strong id="document-list-filters-offcanvas-title">Filters</strong>
+            
+          </li>
+          
+            
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between mb-2">
+                  <strong>Alphabet</strong>
+                  
+                </div>
+                
+                  <div>
+                    <div class="letter-radiobox-container">
+                      
+                        <label class="letter-radiobox" for="alphabet_0">
+                          <input id="alphabet_0" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="a">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">a</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_1">
+                          <input id="alphabet_1" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="b">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">b</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_2">
+                          <input id="alphabet_2" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="c">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">c</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_3">
+                          <input id="alphabet_3" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="d">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">d</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_4">
+                          <input id="alphabet_4" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="e">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">e</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_5">
+                          <input id="alphabet_5" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="f">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">f</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_6">
+                          <input id="alphabet_6" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="g">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">g</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_7">
+                          <input id="alphabet_7" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="h">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">h</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_8">
+                          <input id="alphabet_8" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="i">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">i</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_9">
+                          <input id="alphabet_9" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="j">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">j</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_10">
+                          <input id="alphabet_10" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="k">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">k</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_11">
+                          <input id="alphabet_11" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="l">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">l</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_12">
+                          <input id="alphabet_12" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="m">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">m</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_13">
+                          <input id="alphabet_13" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="n">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">n</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_14">
+                          <input id="alphabet_14" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="o">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">o</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_15">
+                          <input id="alphabet_15" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="p">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">p</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_16">
+                          <input id="alphabet_16" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="q">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">q</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_17">
+                          <input id="alphabet_17" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="r">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">r</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_18">
+                          <input id="alphabet_18" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="s">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">s</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_19">
+                          <input id="alphabet_19" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="t">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">t</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_20">
+                          <input id="alphabet_20" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="u">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">u</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_21">
+                          <input id="alphabet_21" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="v">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">v</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_22">
+                          <input id="alphabet_22" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="w">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">w</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_23">
+                          <input id="alphabet_23" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="x">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">x</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_24">
+                          <input id="alphabet_24" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="y">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">y</span>
+                        </label>
+                      
+                        <label class="letter-radiobox" for="alphabet_25">
+                          <input id="alphabet_25" name="alphabet" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="z">
+                          <span class="letter-radiobox__text" data-track-event="Listing | Filter | Alphabet">z</span>
+                        </label>
+                      
+                    </div>
+                  </div>
+                
+              </li>
+            
+          
+            
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between mb-2">
+                  <strong>Years</strong>
+                  
+                </div>
+                
+                  <div class="facets-scrollable">
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_0" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2024">
+                          <label class="form-check-label" for="years_0">2024</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_1" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2022">
+                          <label class="form-check-label" for="years_1">2022</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_2" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2021">
+                          <label class="form-check-label" for="years_2">2021</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_3" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2020">
+                          <label class="form-check-label" for="years_3">2020</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_4" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2019">
+                          <label class="form-check-label" for="years_4">2019</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_5" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2018">
+                          <label class="form-check-label" for="years_5">2018</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_6" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2017">
+                          <label class="form-check-label" for="years_6">2017</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_7" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2016">
+                          <label class="form-check-label" for="years_7">2016</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_8" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2015">
+                          <label class="form-check-label" for="years_8">2015</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_9" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2014">
+                          <label class="form-check-label" for="years_9">2014</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_10" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2013">
+                          <label class="form-check-label" for="years_10">2013</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_11" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2012">
+                          <label class="form-check-label" for="years_11">2012</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_12" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2011">
+                          <label class="form-check-label" for="years_12">2011</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_13" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2009">
+                          <label class="form-check-label" for="years_13">2009</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_14" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2008">
+                          <label class="form-check-label" for="years_14">2008</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_15" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2007">
+                          <label class="form-check-label" for="years_15">2007</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_16" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2006">
+                          <label class="form-check-label" for="years_16">2006</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_17" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2005">
+                          <label class="form-check-label" for="years_17">2005</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_18" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2004">
+                          <label class="form-check-label" for="years_18">2004</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_19" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2003">
+                          <label class="form-check-label" for="years_19">2003</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_20" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2002">
+                          <label class="form-check-label" for="years_20">2002</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_21" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2001">
+                          <label class="form-check-label" for="years_21">2001</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_22" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="2000">
+                          <label class="form-check-label" for="years_22">2000</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_23" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1999">
+                          <label class="form-check-label" for="years_23">1999</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_24" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1998">
+                          <label class="form-check-label" for="years_24">1998</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_25" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1997">
+                          <label class="form-check-label" for="years_25">1997</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_26" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1996">
+                          <label class="form-check-label" for="years_26">1996</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_27" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1995">
+                          <label class="form-check-label" for="years_27">1995</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_28" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1994">
+                          <label class="form-check-label" for="years_28">1994</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_29" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1992">
+                          <label class="form-check-label" for="years_29">1992</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_30" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1991">
+                          <label class="form-check-label" for="years_30">1991</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_31" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1990">
+                          <label class="form-check-label" for="years_31">1990</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_32" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1989">
+                          <label class="form-check-label" for="years_32">1989</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_33" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1988">
+                          <label class="form-check-label" for="years_33">1988</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_34" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1987">
+                          <label class="form-check-label" for="years_34">1987</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_35" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1986">
+                          <label class="form-check-label" for="years_35">1986</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_36" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1985">
+                          <label class="form-check-label" for="years_36">1985</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_37" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1984">
+                          <label class="form-check-label" for="years_37">1984</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_38" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1983">
+                          <label class="form-check-label" for="years_38">1983</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_39" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1982">
+                          <label class="form-check-label" for="years_39">1982</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_40" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1981">
+                          <label class="form-check-label" for="years_40">1981</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_41" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1980">
+                          <label class="form-check-label" for="years_41">1980</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_42" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1979">
+                          <label class="form-check-label" for="years_42">1979</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_43" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1978">
+                          <label class="form-check-label" for="years_43">1978</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_44" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1977">
+                          <label class="form-check-label" for="years_44">1977</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_45" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1976">
+                          <label class="form-check-label" for="years_45">1976</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_46" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1975">
+                          <label class="form-check-label" for="years_46">1975</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_47" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1974">
+                          <label class="form-check-label" for="years_47">1974</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_48" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1973">
+                          <label class="form-check-label" for="years_48">1973</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_49" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1972">
+                          <label class="form-check-label" for="years_49">1972</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_50" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1971">
+                          <label class="form-check-label" for="years_50">1971</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_51" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1970">
+                          <label class="form-check-label" for="years_51">1970</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_52" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1969">
+                          <label class="form-check-label" for="years_52">1969</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_53" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1968">
+                          <label class="form-check-label" for="years_53">1968</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_54" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1967">
+                          <label class="form-check-label" for="years_54">1967</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_55" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1966">
+                          <label class="form-check-label" for="years_55">1966</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_56" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1965">
+                          <label class="form-check-label" for="years_56">1965</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_57" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1964">
+                          <label class="form-check-label" for="years_57">1964</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_58" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1963">
+                          <label class="form-check-label" for="years_58">1963</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_59" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1962">
+                          <label class="form-check-label" for="years_59">1962</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_60" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1961">
+                          <label class="form-check-label" for="years_60">1961</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_61" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1960">
+                          <label class="form-check-label" for="years_61">1960</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_62" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1959">
+                          <label class="form-check-label" for="years_62">1959</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_63" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1958">
+                          <label class="form-check-label" for="years_63">1958</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_64" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1957">
+                          <label class="form-check-label" for="years_64">1957</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_65" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1956">
+                          <label class="form-check-label" for="years_65">1956</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_66" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1955">
+                          <label class="form-check-label" for="years_66">1955</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_67" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1954">
+                          <label class="form-check-label" for="years_67">1954</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_68" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1952">
+                          <label class="form-check-label" for="years_68">1952</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_69" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1949">
+                          <label class="form-check-label" for="years_69">1949</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_70" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1943">
+                          <label class="form-check-label" for="years_70">1943</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_71" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1942">
+                          <label class="form-check-label" for="years_71">1942</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_72" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1941">
+                          <label class="form-check-label" for="years_72">1941</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_73" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1940">
+                          <label class="form-check-label" for="years_73">1940</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_74" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1939">
+                          <label class="form-check-label" for="years_74">1939</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_75" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1935">
+                          <label class="form-check-label" for="years_75">1935</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_76" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1932">
+                          <label class="form-check-label" for="years_76">1932</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_77" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1930">
+                          <label class="form-check-label" for="years_77">1930</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_78" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1929">
+                          <label class="form-check-label" for="years_78">1929</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_79" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1928">
+                          <label class="form-check-label" for="years_79">1928</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_80" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1925">
+                          <label class="form-check-label" for="years_80">1925</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_81" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1924">
+                          <label class="form-check-label" for="years_81">1924</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_82" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1921">
+                          <label class="form-check-label" for="years_82">1921</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_83" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1918">
+                          <label class="form-check-label" for="years_83">1918</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_84" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1917">
+                          <label class="form-check-label" for="years_84">1917</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_85" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1916">
+                          <label class="form-check-label" for="years_85">1916</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_86" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1914">
+                          <label class="form-check-label" for="years_86">1914</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_87" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1912">
+                          <label class="form-check-label" for="years_87">1912</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_88" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1907">
+                          <label class="form-check-label" for="years_88">1907</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_89" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1900">
+                          <label class="form-check-label" for="years_89">1900</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_90" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1899">
+                          <label class="form-check-label" for="years_90">1899</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_91" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1888">
+                          <label class="form-check-label" for="years_91">1888</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_92" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1885">
+                          <label class="form-check-label" for="years_92">1885</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_93" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1883">
+                          <label class="form-check-label" for="years_93">1883</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_94" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1882">
+                          <label class="form-check-label" for="years_94">1882</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_95" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1881">
+                          <label class="form-check-label" for="years_95">1881</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_96" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1879">
+                          <label class="form-check-label" for="years_96">1879</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_97" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1876">
+                          <label class="form-check-label" for="years_97">1876</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_98" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1875">
+                          <label class="form-check-label" for="years_98">1875</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_99" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1873">
+                          <label class="form-check-label" for="years_99">1873</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_100" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1861">
+                          <label class="form-check-label" for="years_100">1861</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | years">
+                          <input id="years_101" class="form-check-input" name="years" type="checkbox" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="1860">
+                          <label class="form-check-label" for="years_101">1860</label>
+                        </div>
+                      </div>
+                    
+                  </div>
+                
+              </li>
+            
+          
+            
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between mb-2">
+                  <strong>Document nature</strong>
+                  
+                </div>
+                
+                  <div class="facets-scrollable">
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | natures">
+                          <input id="natures_0" class="form-check-input" name="natures" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="act">
+                          <label class="form-check-label" for="natures_0">Act</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | natures">
+                          <input id="natures_1" class="form-check-input" name="natures" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="ord">
+                          <label class="form-check-label" for="natures_1">Ordinance</label>
+                        </div>
+                      </div>
+                    
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check flex-grow-1" data-track-event="Listing | Filter | natures">
+                          <input id="natures_2" class="form-check-input" name="natures" type="radio" hx-get="/legislation/" hx-push-url="true" hx-include="#filter-form" value="si">
+                          <label class="form-check-label" for="natures_2">Statutory Instrument</label>
+                        </div>
+                      </div>
+                    
+                  </div>
+                
+              </li>
+            
+          
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="position-relative">
+        
+          
+            <div class="mb-2 d-flex pocketlaw-hidden" hx-target="#doc-table" hx-push-url="true">
+              <div class="flex-grow-1 me-2">
+                <input id="filter-input" hx-get="/legislation/" hx-trigger="keyup changed delay:300ms" hx-sync="this:replace" aria-label="Filter documents" placeholder="Filter documents" class="form-control" type="text" value="" name="q">
+              </div>
+              <div class="d-flex align-items-center">
+                <div class="d-none d-md-block ms-3 me-2 text-nowrap">Sort by:</div>
+                <select class="form-control" hx-get="/legislation/" name="sort">
+                  <option value="title" selected="">Title (A - Z)</option><option value="-title">Title (Z - A)</option><option value="-date">Date (Newest first)</option><option value="date">Date (Oldest first)</option>
+                </select>
+              </div>
+              <div class="d-none d-md-block ms-2">
+                <button class="btn btn-primary" hx-get="/legislation/" hx-sync="#filter-input:replace" type="submit">
+                  Filter
+                </button>
+              </div>
+            </div>
+            <div class="htmx-progress progress mb-2">
+              <div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div>
+            </div>
+          
+          
+            
+
+<div class="table-responsive" id="doc-table" data-component="DocumentTable">
+  
+    <div class="mb-3 text-muted">
+      
+        405 documents
+      
+    </div>
+  
+  <table class="doc-table doc-table--toggle doc-table--citation   ">
+    
+      <thead>
+        <tr>
+          <th class="cell-toggle"></th>
+          <th scope="col" class="cell-title">
+            <div class="align-items-center" role="button" data-sort="-title">
+              Title
+              <i class="bi ms-2 bi-sort-down "></i>
+            </div>
+          </th>
+          <th scope="col" class="cell-citation"></th>
+          
+          
+          
+          
+          
+          
+          
+        </tr>
+      </thead>
+    
+    
+      
+<tbody><tr class="">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td id="" class="cell-group">A</td>
+  
+  <td class="cell-citation"></td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3028">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2004/7/eng@2016-12-31">Acquisition of Farm Equipment or Material Act</a>
+        
+        <span id="saved-document-star--3028"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3028"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 18:23</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="25570">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/ord/1907/6/eng@2025-02-24">Administration of Estates Act</a>
+        
+        <span id="saved-document-star--25570"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--25570"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 6:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2850">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1979/39/eng@2016-12-31">Administrative Court Act</a>
+        
+        <span id="saved-document-star--2850"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2850"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 7:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3014">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2004/12/eng@2016-12-31">Administrative Justice Act</a>
+        
+        <span id="saved-document-star--3014"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3014"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 10:28</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2691">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1929/6/eng@2016-12-31">Advertisements Regulation Act</a>
+        
+        <span id="saved-document-star--2691"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2691"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 14:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2853">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1980/16/eng@2016-12-31">African Development Bank (Membership of Zimbabwe) Act</a>
+        
+        <span id="saved-document-star--2853"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2853"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 22:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2875">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1983/34/eng@2016-12-31">African Development Fund (Zimbabwe) Act</a>
+        
+        <span id="saved-document-star--2875"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2875"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 22:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3029">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2005/10/eng@2016-12-31">African Export-Import Bank (Membership of Zimbabwe and Branch Office Agreement) Act</a>
+        
+        <span id="saved-document-star--3029"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3029"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 22:17</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2807">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1971/4/eng@2016-12-31">Agricultural and Rural Development Authority Act</a>
+        
+        <span id="saved-document-star--2807"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2807"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 18:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="25562">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1971/6/eng@2024-12-31">Agricultural Finance Act</a>
+        
+        <span id="saved-document-star--25562"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--25562"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 18:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3024">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2004/26/eng@2016-12-31">Agricultural Marketing Authority Act</a>
+        
+        <span id="saved-document-star--3024"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3024"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 18:24</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2793">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1970/31/eng@2016-12-31">Agricultural Research Act</a>
+        
+        <span id="saved-document-star--2793"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2793"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 18:05</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2688">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1925/17/eng@2016-12-31">Alienated Land (Information) Act</a>
+        
+        <span id="saved-document-star--2688"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2688"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 20:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3112">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/ord/1979/3/eng@2016-12-31">Amnesty Act</a>
+        
+        <span id="saved-document-star--3112"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3112"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 9:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3113">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/ord/1980/12/eng@2016-12-31">Amnesty (General Pardon) Act</a>
+        
+        <span id="saved-document-star--3113"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3113"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 9:03</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2833">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1976/33/eng@2016-12-31">Anatomical Donations and Post-mortem Examinations Act</a>
+        
+        <span id="saved-document-star--2833"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2833"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 15:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2739">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1960/5/eng@2016-12-31">Animal Health Act</a>
+        
+        <span id="saved-document-star--2739"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2739"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 19:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2676">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1875/21/eng@2016-12-31">Antenuptial Contracts Act</a>
+        
+        <span id="saved-document-star--2676"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2676"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 5:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3015">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2004/13/eng@2016-12-31">Anti-Corruption Commission Act</a>
+        
+        <span id="saved-document-star--3015"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3015"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 9:22</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2992">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2000/17/eng@2016-12-31">Anti-Personnel Mines (Prohibition) Act</a>
+        
+        <span id="saved-document-star--2992"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2992"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 11:19</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3189">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2018/2/eng@2018-03-14">Appropriation (2018) Act, 2018</a>
+        
+        <span id="saved-document-star--3189"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3189"></div>
+    </td>
+  
+  <td class="cell-citation">Act 2 of 2018</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3231">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2019/2/eng@2019-02-20">Appropriation (2019) Act, 2019</a>
+        
+        <span id="saved-document-star--3231"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3231"></div>
+    </td>
+  
+  <td class="cell-citation">Act 2 of 2019</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3209">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2019/14/eng@2019-12-31">Appropriation (2020) Act, 2019</a>
+        
+        <span id="saved-document-star--3209"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3209"></div>
+    </td>
+  
+  <td class="cell-citation">Act 14 of 2019</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3167">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2020/11/eng@2020-12-31">Appropriation (2021) Act, 2020</a>
+        
+        <span id="saved-document-star--3167"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3167"></div>
+    </td>
+  
+  <td class="cell-citation">Act 11 of 2020</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3215">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2021/6/eng@2021-12-31">Appropriation (2022) Act, 2021</a>
+        
+        <span id="saved-document-star--3215"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3215"></div>
+    </td>
+  
+  <td class="cell-citation">Act 6 of 2021</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3172">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2017/3/eng@2017-03-23">Appropriation Act, 2017</a>
+        
+        <span id="saved-document-star--3172"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3172"></div>
+    </td>
+  
+  <td class="cell-citation">Act 3 of 2017</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3178">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2019/8/eng@2019-08-21">Appropriation Supplementary (2019) Act, 2019</a>
+        
+        <span id="saved-document-star--3178"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3178"></div>
+    </td>
+  
+  <td class="cell-citation">Act 8 of 2019</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2956">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1996/6/eng@2016-12-31">Arbitration Act</a>
+        
+        <span id="saved-document-star--2956"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2956"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 7:15</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2948">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1995/16/eng@2016-12-31">Arbitration (International Investment Disputes) Act</a>
+        
+        <span id="saved-document-star--2948"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2948"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 7:03</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2859">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1981/29/eng@2016-12-31">Architects Act</a>
+        
+        <span id="saved-document-star--2859"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2859"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 27:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2794">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1971/12/eng@2016-12-31">Armorial Bearings, Names, Uniforms and Badges Act</a>
+        
+        <span id="saved-document-star--2794"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2794"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 10:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2672">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1860/28/eng@2016-12-31">Art Unions Act</a>
+        
+        <span id="saved-document-star--2672"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2672"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 25:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3016">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2004/15/eng@2016-12-31">Asset Management Act</a>
+        
+        <span id="saved-document-star--3016"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3016"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 24:26</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3051">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2011/4/eng@2021-10-25">Attorney-General’s Office Act</a>
+        
+        <span id="saved-document-star--3051"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3051"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 7:19</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2779">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1967/28/eng@2016-12-31">Audit and Exchequer Act</a>
+        
+        <span id="saved-document-star--2779"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2779"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 22:03</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3048">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2009/12/eng@2016-12-31">Audit Office Act</a>
+        
+        <span id="saved-document-star--3048"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3048"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 22:18</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td id="" class="cell-group">B</td>
+  
+  <td class="cell-citation"></td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3027">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2004/4/eng@2016-12-31">Balance of Payments Reporting Act</a>
+        
+        <span id="saved-document-star--3027"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3027"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 22:16</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="has-children" data-document-id="2990">
+  
+    <td class="cell-toggle">
+      
+        <button class="btn btn-sm bg-none collapsed" type="button" title="Subsidiary legislation" data-bs-toggle="collapse" data-bs-target="#doc-table-children-39" aria-expanded="false" aria-controls="doc-table-children-39">
+          <i class="bi"></i>
+        </button>
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1999/9/eng@2018-03-14">Banking Act</a>
+        
+        <span id="saved-document-star--2990"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2990"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 24:20</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+        </tbody><tbody id="doc-table-children-39" class="doc-table-children collapse">
+          
+<tr class="">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td id="" class="cell-group">Subsidiary legislation</td>
+  
+  <td class="cell-citation"></td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+          
+            
+<tr class="" data-document-id="25521">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/si/2025/29/eng@2025-03-28">Banking (International Financial Services Centre) Regulations, 2025</a>
+        
+        <span id="saved-document-star--25521"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--25521"></div>
+    </td>
+  
+  <td class="cell-citation">Statutory Instrument 29 of 2025</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+          
+        </tbody>
+      
+    
+      
+<tbody><tr class="" data-document-id="3019">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2004/2/eng@2021-12-31">Bank Use Promotion Act</a>
+        
+        <span id="saved-document-star--3019"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3019"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 24:24</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2823">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1973/54/eng@2016-12-31">Bees Act</a>
+        
+        <span id="saved-document-star--2823"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2823"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 19:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2974">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1999/15/eng@2016-12-31">Bindura University of Science Education Act</a>
+        
+        <span id="saved-document-star--2974"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2974"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 25:22</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2897">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1986/11/eng@2020-03-06">Births and Deaths Registration Act</a>
+        
+        <span id="saved-document-star--2897"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2897"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 5:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2684">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1888/11/eng@2016-12-31">Bonus Prohibition Act</a>
+        
+        <span id="saved-document-star--2684"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2684"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 14:03</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2725">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1956/4/eng@2016-12-31">Boxing and Wrestling Control Act</a>
+        
+        <span id="saved-document-star--2725"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2725"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 25:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2690">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1928/2/eng@2016-12-31">Boy Scouts Association Act</a>
+        
+        <span id="saved-document-star--2690"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2690"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 25:03</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3104">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/ord/1900/4/eng@2016-12-31">Brands Act</a>
+        
+        <span id="saved-document-star--3104"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3104"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 19:03</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="3001">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/2001/3/eng@2016-12-31">Broadcasting Services Act</a>
+        
+        <span id="saved-document-star--3001"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--3001"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 12:06</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2768">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1965/20/eng@2016-12-31">Building Societies Act</a>
+        
+        <span id="saved-document-star--2768"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2768"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 24:02</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="" data-document-id="2747">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1962/49/eng@2016-12-31">Burial and Cremation Act</a>
+        
+        <span id="saved-document-star--2747"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2747"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 5:03</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td id="" class="cell-group">C</td>
+  
+  <td class="cell-citation"></td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+    
+      
+<tr class="has-children" data-document-id="2864">
+  
+    <td class="cell-toggle">
+      
+        <button class="btn btn-sm bg-none collapsed" type="button" title="Subsidiary legislation" data-bs-toggle="collapse" data-bs-target="#doc-table-children-52" aria-expanded="false" aria-controls="doc-table-children-52">
+          <i class="bi"></i>
+        </button>
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/1981/54/eng@2019-02-20">Capital Gains Tax Act</a>
+        
+        <span id="saved-document-star--2864"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--2864"></div>
+    </td>
+  
+  <td class="cell-citation">Chapter 23:01</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+      
+        </tbody><tbody id="doc-table-children-52" class="doc-table-children collapse">
+          
+<tr class="">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td id="" class="cell-group">Subsidiary legislation</td>
+  
+  <td class="cell-citation"></td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+          
+            
+<tr class="" data-document-id="25515">
+  
+    <td class="cell-toggle">
+      
+    </td>
+  
+  
+    <td class="cell-title">
+      <div class="d-flex">
+        <a href="/akn/zw/act/si/2025/22/eng@2025-03-19">Capital Gains Tax (Rate of Interest) Notice, 2025</a>
+        
+        <span id="saved-document-star--25515"></span>
+      </div>
+      
+
+      
+      
+      <div id="saved-document-table-detail--25515"></div>
+    </td>
+  
+  <td class="cell-citation">Statutory Instrument 22 of 2025</td>
+  
+  
+  
+  
+  
+  
+  
+</tr>
+
+          
+        </tbody>
+      
+    
+  </table>
+  
+  
+    
+<ul class="pagination flex-wrap">
+  
+  
+  
+    
+      <li class="page-item active">
+        <a class="page-link" href="?page=1">1</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=2">2</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=3">3</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=4">4</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=5">5</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=6">6</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=7">7</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=8">8</a>
+      </li>
+    
+  
+    
+      <li class="page-item ">
+        <a class="page-link" href="?page=9">9</a>
+      </li>
+    
+  
+  
+    <li class="page-item">
+      <a class="page-link" href="?page=2">Next</a>
+    </li>
+  
+</ul>
+
+  
+</div>
+
+          
+        
+      </div>
+    </div>
+  </div>
+</form>

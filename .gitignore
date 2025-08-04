@@ -1,0 +1,34 @@
+./venv
+venv/
+__pycache__/
+*.pyc
+*.pyo   
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+*.log
+*.sqlite3
+*.db
+*.DS_Store
+*.coverage
+*.mypy_cache/
+*.pytest_cache/
+*.tox/
+*.dist-info/
+*.whl
+*.zip
+*.tar.gz
+*.rar
+*.swp
+*.swo
+*.bak
+# Vector store
+vectorstore/faiss_index/
+# Data
+data/raw/
+data/clean/
+
+# Logs
+evaluation/retrieval_logs/*
+Thumbs.db
