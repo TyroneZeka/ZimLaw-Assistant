@@ -1,108 +1,200 @@
-# src/ingest.py
-
 import os
+import json
 import glob
-from typing import List
-from tqdm import tqdm # For progress bars
-
-# LangChain components for ingestion
-from langchain_community.document_loaders import TextLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from typing import List, Dict, Any, Optional
+from tqdm import tqdm
+from dataclasses import dataclass
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-# --- Configuration ---
-DATA_DIR = "./data/clean"  # Directory containing processed .txt files
-VECTORSTORE_DIR = "./vectorstore/faiss_index"  # Directory to save FAISS index
-os.makedirs(VECTORSTORE_DIR, exist_ok=True)
+# ... existing imports ...
 
-# --- 1. Load Documents ---
-def load_documents(data_dir: str) -> List:
-    """
-    Loads text documents from the specified directory.
-    Assumes documents are .txt files.
-    """
-    documents = []
-    txt_files = glob.glob(os.path.join(data_dir, "*.txt"))
-    
-    if not txt_files:
-        print(f"⚠️ No .txt files found in {data_dir}. Please run your parsers first.")
+@dataclass
+class LegalSection:
+    """Represents a section from a legal document"""
+    id: str
+    title: str
+    content: str
+    metadata: Dict[str, Any]
+
+class LegalDocumentIngester:
+    def __init__(
+        self,
+        json_dir: str = "./data/clean",
+        vectorstore_dir: str = "./vectorstore/faiss_index",
+        chunk_size: int = 800
+    ):
+        self.json_dir = json_dir
+        self.vectorstore_dir = vectorstore_dir
+        self.chunk_size = chunk_size
+        os.makedirs(vectorstore_dir, exist_ok=True)
+
+    def normalize_document(self, doc: Dict) -> Dict:
+        """Normalize document structure regardless of input format"""
+        metadata = {
+            "title": doc.get("title") or doc.get("metadata", {}).get("title", "Unknown"),
+            "chapter": doc.get("chapter") or doc.get("metadata", {}).get("chapter", "Unknown"),
+            "source": doc.get("source_file") or doc.get("metadata", {}).get("source_url", ""),
+            "commencement": doc.get("metadata", {}).get("commencement", "Unknown"),
+            "version_date": doc.get("metadata", {}).get("version_date", "Unknown")
+        }
+        
+        sections = doc.get("sections", [])
+        return {"metadata": metadata, "sections": sections}
+
+    def load_json_documents(self) -> List[Dict]:
+        """Load and normalize all JSON documents from the data directory"""
+        json_files = glob.glob(os.path.join(self.json_dir, "*.json"))
+        documents = []
+        
+        print(f"📁 Loading {len(json_files)} JSON documents...")
+        for file_path in tqdm(json_files, desc="Loading Documents"):
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    doc = json.load(f)
+                    normalized_doc = self.normalize_document(doc)
+                    documents.append(normalized_doc)
+            except Exception as e:
+                print(f"❌ Error loading {file_path}: {e}")
+        
         return documents
 
-    print(f"📁 Loading {len(txt_files)} documents from {data_dir}...")
-    for file_path in tqdm(txt_files, desc="Loading Files"):
+    def process_section(self, section: Dict, doc_metadata: Dict) -> Optional[LegalSection]:
+        """Process a single section into a structured format"""
         try:
-            loader = TextLoader(file_path, encoding='utf-8')
-            documents.extend(loader.load())
+            # Handle different section content keys
+            content = section.get('text') or section.get('content', '')
+            if not content.strip():
+                return None
+
+            # Create clean section number
+            section_number = str(section.get('section', '')).strip()
+            if not section_number:
+                section_number = str(len(doc_metadata.get('processed_sections', [])) + 1)
+
+            # Create unique ID
+            section_id = f"{doc_metadata['title']}_{section_number}".replace(' ', '_').lower()
+            
+            # Create section title
+            title = section.get('title', '').strip()
+            if not title and content:
+                # Use first line as title if none provided
+                title = content.split('\n')[0][:100]
+
+            # Combine metadata
+            metadata = {
+                "act": doc_metadata['title'],
+                "chapter": doc_metadata['chapter'],
+                "section_number": section_number,
+                "section_title": title,
+                "source": doc_metadata['source']
+            }
+            
+            return LegalSection(
+                id=section_id,
+                title=title,
+                content=content.strip(),
+                metadata=metadata
+            )
         except Exception as e:
-            print(f"❌ Error loading {file_path}: {e}")
-    print(f"✅ Loaded {len(documents)} document objects.")
-    return documents
+            print(f"❌ Error processing section: {e}")
+            return None
 
-# --- 2. Split Documents into Chunks ---
-def split_documents(documents: List, chunk_size: int = 800, chunk_overlap: int = 100) -> List:
-    """
-    Splits documents into smaller chunks for better retrieval.
-    """
-    print("✂️ Splitting documents into chunks...")
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        length_function=len,
-        is_separator_regex=False,
-        separators=["\n\n", "\n", ". ", " ", ""] # Try to split on paragraphs, then lines, etc.
-    )
-    texts = text_splitter.split_documents(documents)
-    print(f"✅ Split into {len(texts)} text chunks.")
-    return texts
-
-# --- 3. Create Embeddings ---
-def create_embeddings(model_name: str = "all-MiniLM-L6-v2"):
-    """
-    Initializes the HuggingFace embeddings model.
-    Consider 'BAAI/bge-small-en-v1.5' for potentially better quality.
-    """
-    print(f"🧠 Loading embedding model: {model_name}...")
-    embeddings = HuggingFaceEmbeddings(model_name=model_name)
-    print("✅ Embedding model loaded.")
-    return embeddings
-
-# --- 4. Create and Save FAISS Vectorstore ---
-def create_and_save_vectorstore(texts: List, embeddings, vectorstore_dir: str):
-    """
-    Creates a FAISS vectorstore from texts and embeddings, then saves it.
-    """
-    print("🔍 Creating FAISS vectorstore (this may take a few minutes)...")
-    try:
-        # Create the vectorstore
-        vectorstore = FAISS.from_documents(texts, embeddings)
+    def prepare_sections(self, documents: List[Dict]) -> List[LegalSection]:
+        """Extract and prepare all sections from documents"""
+        sections = []
         
-        # Save the vectorstore locally
-        vectorstore.save_local(vectorstore_dir)
-        print(f"✅ FAISS vectorstore created and saved to {vectorstore_dir}")
-    except Exception as e:
-        print(f"❌ Error creating or saving vectorstore: {e}")
+        print("📑 Processing document sections...")
+        for doc in tqdm(documents, desc="Processing Documents"):
+            doc_metadata = doc['metadata']
+            doc_metadata['processed_sections'] = []
+            
+            for section in doc['sections']:
+                legal_section = self.process_section(section, doc_metadata)
+                if legal_section:
+                    sections.append(legal_section)
+                    doc_metadata['processed_sections'].append(legal_section.id)
+        
+        return sections
 
-# --- Main Ingestion Process ---
+    # ... rest of the existing methods (create_embeddings, create_search_document, create_vectorstore) ...
+
+    def create_embeddings(self, model_name: str = "BAAI/bge-small-en-v1.5"):
+        """Initialize the embeddings model"""
+        print(f"🧠 Loading embedding model: {model_name}...")
+        return HuggingFaceEmbeddings(
+            model_name=model_name,
+            model_kwargs={'device': 'cpu'},
+            encode_kwargs={'normalize_embeddings': True}
+        )
+
+    def create_search_document(self, section: LegalSection) -> Dict:
+        """Create a formatted document for search"""
+        # Create a well-structured text that preserves context
+        text = f"""
+Act: {section.metadata['act']}
+Chapter: {section.metadata['chapter']}
+Section {section.metadata['section_number']}: {section.title}
+
+{section.content}
+""".strip()
+
+        return {
+            "text": text,
+            "metadata": {
+                "id": section.id,
+                **section.metadata
+            }
+        }
+
+    def create_vectorstore(self, sections: List[LegalSection], embeddings):
+        """Create and save the FAISS vectorstore"""
+        print("🔍 Creating FAISS vectorstore...")
+        
+        # Prepare documents for vectorstore
+        documents = [
+            self.create_search_document(section)
+            for section in tqdm(sections, desc="Preparing Search Documents")
+        ]
+        
+        # Create vectorstore
+        vectorstore = FAISS.from_texts(
+            texts=[doc["text"] for doc in documents],
+            embedding=embeddings,
+            metadatas=[doc["metadata"] for doc in documents]
+        )
+        
+        # Save vectorstore
+        vectorstore.save_local(self.vectorstore_dir)
+        print(f"✅ Vectorstore saved to {self.vectorstore_dir}")
+        return vectorstore
+
+    def run_pipeline(self):
+        """Run the complete ingestion pipeline"""
+        print("=== Starting Legal Document Ingestion Pipeline ===")
+        
+        # 1. Load JSON documents
+        documents = self.load_json_documents()
+        if not documents:
+            print("❌ No documents found to process")
+            return
+        
+        # 2. Process sections
+        sections = self.prepare_sections(documents)
+        print(f"✅ Processed {len(sections)} sections")
+        
+        # 3. Initialize embeddings
+        embeddings = self.create_embeddings()
+        
+        # 4. Create and save vectorstore
+        vectorstore = self.create_vectorstore(sections, embeddings)
+        
+        print("=== Ingestion Pipeline Complete ===")
+        return vectorstore
+
 def main():
-    """Main function to run the ingestion pipeline."""
-    print("--- Starting ZimLaw Ingestion Pipeline ---")
-    
-    # 1. Load
-    documents = load_documents(DATA_DIR)
-    if not documents:
-        return
-
-    # 2. Split
-    texts = split_documents(documents)
-
-    # 3. Embed
-    embeddings = create_embeddings()
-
-    # 4. Store
-    create_and_save_vectorstore(texts, embeddings, VECTORSTORE_DIR)
-    
-    print("--- Ingestion Pipeline Complete ---")
+    ingester = LegalDocumentIngester()
+    ingester.run_pipeline()
 
 if __name__ == "__main__":
     main()
