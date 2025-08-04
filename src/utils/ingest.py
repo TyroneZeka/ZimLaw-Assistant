@@ -117,8 +117,6 @@ class LegalDocumentIngester:
         
         return sections
 
-    # ... rest of the existing methods (create_embeddings, create_search_document, create_vectorstore) ...
-
     def create_embeddings(self, model_name: str = "BAAI/bge-small-en-v1.5"):
         """Initialize the embeddings model"""
         print(f"🧠 Loading embedding model: {model_name}...")
