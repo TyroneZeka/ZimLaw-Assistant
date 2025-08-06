@@ -1,4 +1,4 @@
-# 🇿🇼 ZimLaw Assistant
+# ZimLaw Assistant
 
 An AI-powered legal assistant for Zimbabwe, built with RAG to help citizens understand their rights under the Constitution and key laws.
 

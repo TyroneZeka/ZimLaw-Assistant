@@ -1,0 +1,79 @@
+# src/create_finetune_dataset.py
+
+import json
+from typing import List, Dict
+
+def create_finetune_dataset() -> List[Dict]:
+    """Create question-answer pairs from legal documents for fine-tuning."""
+    samples = []
+
+    # --- Constitution Examples ---
+    samples.append({
+        "instruction": "What fundamental rights are protected by the Constitution of Zimbabwe?",
+        "input": "Based on the Constitution of Zimbabwe, Chapter 4.",
+        "output": "The Constitution of Zimbabwe, under Chapter 4 (Declaration of Rights), protects numerous fundamental rights. These include (but are not limited to): the right to equality and non-discrimination (Section 56), the right to privacy (Section 57), freedom of assembly and association (Section 58), freedom of conscience (Section 60), freedom of expression and freedom of the media (Section 61), the right to access information (Section 62), labour rights (Section 65), freedom of movement and residence (Section 66), political rights (Section 67), the right to administrative justice (Section 68), the right to a fair hearing (Section 69), rights of accused persons (Section 70), and property rights (Section 71)."
+    })
+
+    samples.append({
+        "instruction": "What does the Constitution say about the right to privacy?",
+        "input": "Refer to Section 57 of the Constitution of Zimbabwe.",
+        "output": "According to Section 57 of the Constitution of Zimbabwe, every person has the right to privacy, which includes the right not to have - (a) their private correspondence searched or seized; (b) their home or other property entered without permission or a court order; or (c) their privacy infringed in relation to their communications, personal information, or family affairs."
+    })
+
+    samples.append({
+        "instruction": "What are the rights of children according to the Constitution?",
+        "input": "Look at Section 81 of the Constitution of Zimbabwe.",
+        "output": "Section 81 of the Constitution of Zimbabwe outlines the rights of children (persons under 18 years). These rights include: (a) the right to equal treatment before the law, including the right to be heard; (b) the right to be given a name and family name; (c) the right to a prompt birth certificate if born in Zimbabwe or a Zimbabwean citizen by descent; (d) the right to family or parental care, or appropriate alternative care if removed from the family environment; (e) the right to basic nutrition, shelter, basic health care services, and social services; (f) the right to be protected from maltreatment, neglect, abuse, or degradation; and (g) the right to be protected from exploitative labour practices."
+    })
+
+    samples.append({
+        "instruction": "What is the official language policy in Zimbabwe according to the Constitution?",
+        "input": "Refer to Section 63 and Part 1 of Chapter 2 in the Constitution of Zimbabwe.",
+        "output": "According to Section 63 of the Constitution of Zimbabwe, the official language of Zimbabwe is English. However, Part 1 of Chapter 2 recognizes several other languages as officially recognised languages. These are Chewa, Chibarwe, English, Kalanga, Koisan, Nambya, Ndau, Ndebele, Shangani, Shona, sign language, Sotho, Tonga, Tswana, Venda, and Xhosa. An Act of Parliament may prescribe additional languages as officially recognised."
+    })
+
+    samples.append({
+        "instruction": "What are the founding values and principles of Zimbabwe as per the Constitution?",
+        "input": "Refer to Section 7 of the Constitution of Zimbabwe.",
+        "output": "Section 7 of the Constitution of Zimbabwe states that Zimbabwe is founded on several key values and principles, including: (a) supremacy of the Constitution; (b) the rule of law; (c) fundamental human rights and freedoms; (d) the nation's diverse cultural, religious, and traditional values; (e) recognition of the inherent dignity and worth of each human being; (f) recognition of the equality of all human beings; (g) gender equality; (h) respect for the people of Zimbabwe from whom authority to govern is derived; (i) transparency, justice, accountability, and responsiveness; (j) fostering national unity, peace, and stability; (k) recognition of the rights of various groups (ethnic, racial, cultural, linguistic, religious, persons with disabilities, women, elderly, youths, children, veterans); (l) equitable sharing of national resources, including land; (m) due respect for vested rights; and (n) the promotion of public service values like professionalism and fairness."
+    })
+
+    # --- Labour Act Examples ---
+    # Note: Labour Act text provided was limited, so this is a placeholder based on common content.
+    # You should refine this with specific text from your parsed Labour Act file.
+    samples.append({
+        "instruction": "What are the general rights of employees under the Labour Act?",
+        "input": "Refer to the Labour Act, particularly sections related to employee rights.",
+        "output": "The Labour Act of Zimbabwe provides several rights to employees, including but not limited to: the right to fair labour practices (Section 11), the right to join a trade union (Section 12), the right to engage in collective bargaining through their union (Section 13), the right to strike (subject to conditions in Chapter VIII), the right to maternity leave (Chapter VII), and the right to be free from discrimination (Section 11(2)(b)). Specific conditions of employment like working hours, leave, and termination procedures are also outlined to protect employees."
+    })
+
+    # --- ZimLII Example (Dangerous Drugs Act) ---
+    samples.append({
+        "instruction": "What happens to property forfeited under the Dangerous Drugs Act if the accused is acquitted?",
+        "input": "Refer to Section 14H of the Dangerous Drugs Act [Chapter 15:02] as outlined on ZimLII.",
+        "output": "According to Section 14H of the Dangerous Drugs Act [Chapter 15:02], if proceedings related to a dangerous drugs crime conclude without a conviction (e.g., the accused is acquitted or the charge is withdrawn), any property that was forfeited to the State under Section 14E must be returned to the person from whom it was seized, or to any other person who can prove they are the rightful owner."
+    })
+
+    # --- General Legal Process ---
+    samples.append({
+        "instruction": "How can an arrested person in Zimbabwe access a lawyer?",
+        "input": "Based on the Constitution of Zimbabwe, Section 50.",
+        "output": "Section 50(1)(h) of the Constitution of Zimbabwe guarantees that every arrested person has the right, at their own expense, to choose and consult in private with a legal practitioner. Furthermore, if they wish, they have the right to consult in private with a legal practitioner assigned to them by the State at State expense. They must also be informed as soon as reasonably practicable of these rights."
+    })
+
+    # --- More Examples can be added here ---
+
+    print(f"✅ Created {len(samples)} question-answer examples for fine-tuning.")
+    return samples
+
+def save_dataset(examples: List[Dict], output_file: str = "./data/legal_finetune_dataset.json"):
+    """Save the dataset to a JSON file."""
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(examples, f, indent=2, ensure_ascii=False)
+    print(f"📄 Dataset saved to {output_file}")
+
+# === MAIN ===
+if __name__ == "__main__":
+    dataset = create_finetune_dataset()
+    if dataset:
+        save_dataset(dataset)

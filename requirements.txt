@@ -4,6 +4,8 @@ ollama
 llama-index  # Optional: if you want to compare with LlamaIndex
 streamlit
 faiss-cpu
+datasets
+peft
 sentence-transformers
 pymupdf  # for PDF extraction (fitz)
 beautifulsoup4  # for HTML scraping
