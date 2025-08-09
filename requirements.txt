@@ -5,6 +5,9 @@ llama-index  # Optional: if you want to compare with LlamaIndex
 streamlit
 faiss-cpu
 datasets
+torch
+transformers
+sentence-transformers
 peft
 sentence-transformers
 pymupdf  # for PDF extraction (fitz)
