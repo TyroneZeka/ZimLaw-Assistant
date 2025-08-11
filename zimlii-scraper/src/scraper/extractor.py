@@ -1,4 +1,4 @@
-# filepath: d:\Workspace\ZimLaw-Assistant\src\utils\zimlii_scraper.py
+# filepath: d:\Workspace\ZimLaw-Assistant\src\utils\zi.py
 # src/utils/zimlii_scraper.py
 
 import requests

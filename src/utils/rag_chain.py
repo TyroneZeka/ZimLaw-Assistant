@@ -1,8 +1,11 @@
 import os
-from typing import Dict, Any, List
+import numpy as np
+from sentence_transformers import CrossEncoder
+from langchain.schema import Document
+from typing import Dict, Any, List 
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.llms import Ollama
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaLLM
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
@@ -11,16 +14,23 @@ class ZimLawRAGChain:
     def __init__(
         self,
         vectorstore_dir: str = "./vectorstore/faiss_index",
-        model_name: str = "deepseek",  # Changed to use model name
-        model_path: str = None,  # Optional path to local model
+        model_name: str = "llama3",
+        model_path: str = None,
         temperature: float = 0.1,
         max_tokens: int = 1000,
-        top_k: int = 4
+        top_k: int = 20,  # Increased initial retrieval
+        final_k: int = 4,  # Number of documents after re-ranking
+        reranker_model: str = "BAAI/bge-reranker-base" # Can use large with more mem
     ):
+        # Add existing initialization parameters
+        self.top_k = top_k
+        self.final_k = final_k
+        self.reranker_model = reranker_model
+        self._reranker = None
         self.model_configs = {
             "deepseek": {
                 "name": "deepseek-r1:8b",
-                "context_length": 4096
+                "context_length": 8192 
             },
             "llama2": {
                 "name": "llama2:7b",
@@ -47,6 +57,52 @@ class ZimLawRAGChain:
         self.llm = self._initialize_llm()
         self.retriever = self._create_retriever()
         self.chain = self._create_chain()
+    
+    def _get_reranker(self):
+        """Lazy loading of the re-ranker model"""
+        if self._reranker is None:
+            print("📥 Loading re-ranker model...")
+            self._reranker = CrossEncoder(self.reranker_model, max_length=512)
+            print("✅ Re-ranker model loaded")
+        return self._reranker
+    
+    def _rerank_documents(self, query: str, docs: List[Document]) -> List[Document]:
+        """Re-rank documents using the cross-encoder model"""
+        if not docs:
+            return []
+
+        # Prepare query-document pairs for the re-ranker
+        pairs = [[query, doc.page_content] for doc in docs]
+        
+        # Get relevance scores
+        reranker = self._get_reranker()
+        scores = reranker.predict(pairs)
+
+        # Sort documents by score
+        if isinstance(scores[0], np.ndarray):
+            scores = [s[0] for s in scores]
+        
+        # Create (score, doc) pairs and sort
+        scored_docs = list(zip(scores, docs))
+        scored_docs.sort(key=lambda x: x[0], reverse=True)
+        
+        # Take top k documents
+        reranked_docs = [doc for _, doc in scored_docs[:self.final_k]]
+        
+        print(f"🔄 Re-ranked {len(docs)} documents to select top {len(reranked_docs)}")
+        return reranked_docs
+
+    def _create_retriever(self):
+        """Create the retriever with improved search parameters"""
+        return self.vectorstore.as_retriever(
+            search_kwargs={
+                "k": self.top_k,
+                "fetch_k": self.top_k * 2,  # Fetch more for diversity
+                "lambda_mult": 0.3,  # MMR diversity factor
+                "score_threshold": 0.5,
+            },
+            search_type="mmr"  # Use MMR for initial diversity
+        )
 
     def _load_vectorstore(self) -> FAISS:
         """Load the FAISS vectorstore"""
@@ -68,13 +124,13 @@ class ZimLawRAGChain:
             allow_dangerous_deserialization=True
         )
 
-    def _initialize_llm(self) -> Ollama:
+    def _initialize_llm(self) -> OllamaLLM:
         """Initialize the chosen LLM via Ollama"""
         model_config = self.model_configs[self.model_name]
         model_path = self.model_path or model_config["name"]
         
         print(f"🤖 Initializing {self.model_name} model...")
-        return Ollama(
+        return OllamaLLM(
             model=model_path,
             temperature=self.temperature,
             num_ctx=model_config["context_length"],
@@ -138,23 +194,39 @@ class ZimLawRAGChain:
         )
 
     def answer_question(self, question: str) -> Dict[str, Any]:
-        """Get an answer for a legal question with source citations"""
+        """Enhanced answer generation with re-ranking"""
         try:
             print(f"\n❓ Question: {question}")
+            
+            # 1. Initial retrieval
+            initial_docs = self.retriever.get_relevant_documents(
+                question, 
+                k=self.top_k
+            )
+            print(f"📚 Retrieved {len(initial_docs)} initial documents")
+            
+            # 2. Re-rank documents
+            reranked_docs = self._rerank_documents(question, initial_docs)
+            
+            # 3. Create a temporary retriever with re-ranked documents
+            context = "\n\n".join([doc.page_content for doc in reranked_docs])
+            
+            # 4. Generate answer using re-ranked documents
             result = self.chain.invoke({
-                "query": question
+                "query": question,
+                "context": context
             })
             
-            # Extract sources for citation
+            # Process sources
             sources = []
-            if "source_documents" in result:
-                for doc in result["source_documents"]:
-                    sources.append({
-                        "act": doc.metadata.get("act"),
-                        "chapter": doc.metadata.get("chapter"),
-                        "section": doc.metadata.get("section_number"),
-                        "title": doc.metadata.get("section_title")
-                    })
+            for doc in reranked_docs:  # Use re-ranked docs for sources
+                sources.append({
+                    "act": doc.metadata.get("act"),
+                    "chapter": doc.metadata.get("chapter"),
+                    "section": doc.metadata.get("section_number"),
+                    "title": doc.metadata.get("section_title"),
+                    "relevance": "High"  # Adding relevance indicator
+                })
             
             return {
                 "question": question,
