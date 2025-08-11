@@ -2,7 +2,7 @@ import os
 import numpy as np
 from sentence_transformers import CrossEncoder
 from langchain.schema import Document
-from typing import Dict, Any, List 
+from typing import Dict, Any, List, Optional, Tuple
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
@@ -14,17 +14,19 @@ class ZimLawRAGChain:
     def __init__(
         self,
         vectorstore_dir: str = "./vectorstore/faiss_index",
-        model_name: str = "llama3",
+        model_name: str = "deepseek",  # Options: 'deepseek', 'llama2', 'llama3'
         model_path: str = None,
         temperature: float = 0.1,
         max_tokens: int = 1000,
         top_k: int = 20,  # Increased initial retrieval
         final_k: int = 4,  # Number of documents after re-ranking
-        reranker_model: str = "BAAI/bge-reranker-base" # Can use large with more mem
+        reranker_model: str = "BAAI/bge-reranker-base", # Can use large with more mem
+        enable_query_rewriting: bool = True
     ):
         # Add existing initialization parameters
         self.top_k = top_k
         self.final_k = final_k
+        self.enable_query_rewriting = enable_query_rewriting
         self.reranker_model = reranker_model
         self._reranker = None
         self.model_configs = {
@@ -57,6 +59,77 @@ class ZimLawRAGChain:
         self.llm = self._initialize_llm()
         self.retriever = self._create_retriever()
         self.chain = self._create_chain()
+        
+    def _get_query_rewrite_prompt(self) -> str:
+        """Returns the prompt template for query rewriting"""
+        return """You are a legal query assistant for Zimbabwean law. Your task is to rewrite the user's question into a clear, formal, and legally precise query suitable for searching Zimbabwean legal documents.
+
+        Original Question: {query}
+
+        Instructions:
+        1. Identify the core legal concepts and issues
+        2. Use appropriate legal terminology from Zimbabwean law
+        3. Make the query more specific and actionable
+        4. Preserve the original intent of the question
+        5. Focus on relevant acts and sections that might contain the answer
+
+        Rewritten Query:"""
+    
+    def _rewrite_query(self, query: str) -> Tuple[str, str]:
+        """Rewrites the user query into a more formal legal query"""
+        if not self.enable_query_rewriting:
+            return query, None
+
+        try:
+            print("🔄 Rewriting query for legal search...")
+            
+            # Format the rewrite prompt
+            prompt = self._get_query_rewrite_prompt().format(query=query)
+            
+            # Get rewritten query from LLM
+            rewritten = self.llm.invoke(prompt).strip()
+            
+            # Validate rewritten query
+            if not rewritten or len(rewritten) < 10:
+                print("⚠️ Query rewriting produced invalid result, using original query")
+                return query, None
+                
+            print(f"📝 Original: {query}")
+            print(f"✨ Rewritten: {rewritten}")
+            
+            return rewritten, query  # Return both rewritten and original
+            
+        except Exception as e:
+            print(f"❌ Error in query rewriting: {str(e)}")
+            return query, None
+    
+        
+    def _create_prompt_template(self) -> PromptTemplate:
+        """Updated prompt template to include both original and rewritten queries"""
+        template = """You are a legal assistant specialized in Zimbabwean law. Your role is to provide accurate, clear, and well-referenced legal information.
+
+        Original Question: {original_question}
+        Formal Legal Query: {question}
+
+        Relevant legal context:
+        {context}
+
+        Instructions:
+        1. Answer the original question using the legal context
+        2. Cite specific sections and acts
+        3. Use clear, simple language while maintaining legal accuracy
+        4. Structure your answer with clear headings and bullet points
+        5. If rights or procedures are listed, enumerate them
+        6. Provide cross-references when relevant
+
+        Your professional legal response:"""
+
+        return PromptTemplate(
+            template=template,
+            input_variables=["context", "question", "original_question"]
+        )
+    
+    
     
     def _get_reranker(self):
         """Lazy loading of the re-ranker model"""
@@ -194,42 +267,47 @@ class ZimLawRAGChain:
         )
 
     def answer_question(self, question: str) -> Dict[str, Any]:
-        """Enhanced answer generation with re-ranking"""
+        """Enhanced answer generation with query rewriting"""
         try:
-            print(f"\n❓ Question: {question}")
+            print(f"\n❓ Received question: {question}")
             
-            # 1. Initial retrieval
+            # 1. Rewrite the query
+            rewritten_query, original_query = self._rewrite_query(question)
+            
+            # 2. Initial retrieval with rewritten query
             initial_docs = self.retriever.get_relevant_documents(
-                question, 
+                rewritten_query, 
                 k=self.top_k
             )
             print(f"📚 Retrieved {len(initial_docs)} initial documents")
             
-            # 2. Re-rank documents
-            reranked_docs = self._rerank_documents(question, initial_docs)
+            # 3. Re-rank documents
+            reranked_docs = self._rerank_documents(rewritten_query, initial_docs)
             
-            # 3. Create a temporary retriever with re-ranked documents
+            # 4. Create context from reranked documents
             context = "\n\n".join([doc.page_content for doc in reranked_docs])
             
-            # 4. Generate answer using re-ranked documents
+            # 5. Generate answer using both queries
             result = self.chain.invoke({
-                "query": question,
+                "query": rewritten_query,
+                "original_question": original_query or question,
                 "context": context
             })
             
             # Process sources
             sources = []
-            for doc in reranked_docs:  # Use re-ranked docs for sources
+            for doc in reranked_docs:
                 sources.append({
                     "act": doc.metadata.get("act"),
                     "chapter": doc.metadata.get("chapter"),
                     "section": doc.metadata.get("section_number"),
                     "title": doc.metadata.get("section_title"),
-                    "relevance": "High"  # Adding relevance indicator
+                    "relevance": "High"
                 })
             
             return {
-                "question": question,
+                "original_question": original_query or question,
+                "rewritten_query": rewritten_query,
                 "answer": result.get("result", "No answer generated"),
                 "sources": sources
             }
@@ -248,6 +326,7 @@ def main():
     
     test_questions = [
         "What are my constitutional rights if I'm arrested?",
+        "Can my boss fire me for being late?"
         "What is the process for registering a trade union?",
         "What are the requirements for fair dismissal under the Labour Act?",
         "What are the fundamental rights protected in Chapter 4 of the Constitution?"
