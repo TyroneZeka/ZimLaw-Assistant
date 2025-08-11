@@ -11,15 +11,35 @@ class ZimLawRAGChain:
     def __init__(
         self,
         vectorstore_dir: str = "./vectorstore/faiss_index",
-        model_name: str = "deepseek-r1:8b",
+        model_name: str = "deepseek",  # Changed to use model name
+        model_path: str = None,  # Optional path to local model
         temperature: float = 0.1,
         max_tokens: int = 1000,
         top_k: int = 4
     ):
-        self.vectorstore_dir = vectorstore_dir
+        self.model_configs = {
+            "deepseek": {
+                "name": "deepseek-r1:8b",
+                "context_length": 4096
+            },
+            "llama2": {
+                "name": "llama2:7b",
+                "context_length": 4096
+            },
+            "llama3": {
+                "name": "llama3:8b",
+                "context_length": 8192
+            }
+        }
+        
+        if model_name not in self.model_configs:
+            raise ValueError(f"Unsupported model: {model_name}. Available models: {list(self.model_configs.keys())}")
+        
         self.model_name = model_name
+        self.model_path = model_path
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.vectorstore_dir = vectorstore_dir
         self.top_k = top_k
         
         # Initialize components
@@ -49,15 +69,18 @@ class ZimLawRAGChain:
         )
 
     def _initialize_llm(self) -> Ollama:
-        """Initialize the Deepseek LLM via Ollama"""
-        print(f"🤖 Initializing {self.model_name}...")
+        """Initialize the chosen LLM via Ollama"""
+        model_config = self.model_configs[self.model_name]
+        model_path = self.model_path or model_config["name"]
+        
+        print(f"🤖 Initializing {self.model_name} model...")
         return Ollama(
-            model=self.model_name,
+            model=model_path,
             temperature=self.temperature,
-            num_ctx=4096,  # Larger context window for legal texts
+            num_ctx=model_config["context_length"],
             num_predict=self.max_tokens,
             callbacks=[StreamingStdOutCallbackHandler()],
-            stop=["Human:", "Assistant:"]  # Prevent continuing the conversation
+            stop=["Human:", "Assistant:"]
         )
 
     def _create_retriever(self):
@@ -65,7 +88,7 @@ class ZimLawRAGChain:
         return self.vectorstore.as_retriever(
             search_kwargs={
                 "k": self.top_k,
-                "fetch_k": self.top_k * 3,  # Fetch more docs then filter
+                "fetch_k": self.top_k * 4,
                 "lambda_mult": 0.3,  # Adjust MMR diversity
                 "score_threshold": 0.5,  # Minimum relevance score
             },
