@@ -1,0 +1,38 @@
+Goal: Improve quality and speed by fixing the root cause: poor document chunks.
+
+#TODO
+1. Refactor Parsers for Section-Level Chunking
+    - we would like to redo our parser as I have realized we were missing something important.
+    - The parser look like they are able to get the Chapter of the acts in the metadata correct but they are failing to get the proper section numbers
+    - Section number are the numbered headers in the html e.g 
+    "sections": [
+    {
+      "section": "4657",
+      "title": "1. Short title",
+      "text": "This Act may be cited as the Zimbabwe Youth and Sports and Recreation Councils Act[Chapter 25:19].",
+      "source_url": null
+    },
+    {
+      "section": "(a)",
+      "title": "3D. Vacation of office by members",
+      "text": "one month after the date he gives notice to theCouncilof his intention to resign or on the expiry of such shorter period as he and theCouncilmay agree; or if he is required to vacate his office by theMinisterin terms of section three E; or if, in case of anelected member, he vacates his office in terms of subsection (3) of section four.",
+      "source_url": null
+    },]
+    Here we have invalid sections, where in the first part, the section is supposed to be section 1 with title being: Short title, and in the next one section being 3D and title being Vacation of office by members.
+    - Also this part "theCouncilof his intention to resign or on the expiry of such shorter period as he and theCouncilmay" has jumbled words mostly because it has some html tags within and when they are removed they remove the space tag too. Check the html attached
+
+2. Re-run the Ingestion Pipeline
+    -This creates a new, high-quality vectorstore with section-level chunks. This is essential for the next steps.
+
+3. Implement Chain-of-Thought (CoT) Prompting:
+    - Task: Update the final prompt template in rag_chain.py to force the LLM to reason step-by-step.
+    Think step by step:
+        1. What is the user's question?
+        2. Which specific section of Zimbabwean law applies? Cite it.
+        3. What does that section say?
+        4. Based on this, provide a clear and concise answer.
+
+        Context: {context}
+        Question: {question}
+        Answer:
+

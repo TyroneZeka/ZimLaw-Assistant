@@ -14,11 +14,11 @@ class ZimLawRAGChain:
     def __init__(
         self,
         vectorstore_dir: str = "./vectorstore/faiss_index",
-        model_name: str = "deepseek",  # Options: 'deepseek', 'llama2', 'llama3'
+        model_name: str = "llama3",  # Options: 'deepseek', 'llama2', 'llama3'
         model_path: str = None,
         temperature: float = 0.1,
         max_tokens: int = 1000,
-        top_k: int = 20,  # Increased initial retrieval
+        top_k: int = 5,  # Increased initial retrieval
         final_k: int = 4,  # Number of documents after re-ranking
         reranker_model: str = "BAAI/bge-reranker-base", # Can use large with more mem
         enable_query_rewriting: bool = True
@@ -335,7 +335,7 @@ def main():
     for question in test_questions:
         result = rag_chain.answer_question(question)
         print("\n" + "="*80)
-        print(f"Question: {result['question']}")
+        print(f"Question: {result['original_question']}")
         print(f"Answer: {result['answer']}")
         if "sources" in result:
             print("\nSources:")

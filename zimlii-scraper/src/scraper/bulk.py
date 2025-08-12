@@ -82,7 +82,7 @@ class BulkScraper:
                     json_file = f"{act_slug}.json"
                     
                     # Save outputs
-                    save_to_text(sections, metadata, txt_file)
+                    # save_to_text(sections, metadata, txt_file)
                     save_to_json(sections, metadata, json_file)
                     
                     # Record progress

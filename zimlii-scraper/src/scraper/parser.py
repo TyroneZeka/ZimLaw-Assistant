@@ -32,9 +32,35 @@ def get_page_metadata(soup, url):
         "source_url": url,
         "version_date": "31 December 2016"  # From footer note
     }
+    
+def clean_text(text: str) -> str:
+    """Enhanced text cleaning"""
+    if not text:
+        return ""
+        
+    # Fix common spacing issues
+    replacements = {
+        "theacquiring authority": "the acquiring authority",
+        "Theacquiring authority": "The acquiring authority",
+        "acquiring authority acquiring authority": "acquiring authority",
+        "designated valuation officer designated valuation officer": "designated valuation officer",
+        "theMinister": "the Minister",
+        "theCouncil": "the Council",
+    }
+    
+    cleaned = text
+    
+    # Apply replacements
+    for old, new in replacements.items():
+        cleaned = cleaned.replace(old, new)
+    
+    # Fix multiple spaces and normalize
+    cleaned = " ".join(cleaned.split())
+    
+    return cleaned.strip()
 
 def scrape_zimlii_act(url):
-    """Scrape a ZimLII Act page (e.g., Dangerous Drugs Act)"""
+    """Scrape a ZimLII Act page with improved section handling"""
     print(f"🔍 Fetching: {url}")
     response = requests.get(url, headers=HEADERS)
     
@@ -43,103 +69,114 @@ def scrape_zimlii_act(url):
         return None
 
     soup = BeautifulSoup(response.content, 'html.parser')
-
-    # Extract document metadata
     metadata = get_page_metadata(soup, url)
-    print(f"📘 Found: {metadata['title']} ({metadata['chapter']})")
-
+    
     sections = []
-    all_section_divs = soup.find_all('section', class_='akn-section')
+    current_main_section = None
     
     # Process main sections
-    for div in all_section_divs:
-        section_data = extract_section_data(div)
+    for section_div in soup.find_all('section', class_='akn-section'):
+        section_data = extract_section_data(section_div, current_main_section)
         if section_data:
+            if section_data['section_type'] == 'main':
+                current_main_section = section_data['section']
             sections.append(section_data)
-            
+    
     # Process schedules
     schedules = extract_schedules(soup)
     if schedules:
         sections.extend(schedules)
-
-    print(f"✅ Successfully extracted {len(sections)} sections and schedules")
+        
+    print(f"✅ Successfully extracted {len(sections)} sections")
     return sections, metadata
 
-def extract_section_data(section_div, last_section_num=[0]):
-    section_number_tag = section_div.find('span', class_='akn-num')
-    section_title = section_div.find(['h2', 'h3'])
+def extract_section_number(section_div) -> tuple:
+    """Extract proper section number and type from section div"""
+    section_num = section_div.find('span', class_='akn-num')
+    if not section_num:
+        return None, None
+        
+    num_text = section_num.get_text(strip=True).strip()
     
-    # Return None only if the title is missing (a section must have a title)
-    if not section_title:
-        return None
-
-    section_title_text = section_title.get_text(strip=True)
-
-    # Logic for determining the section number
-    if section_number_tag:
-        num_text = section_number_tag.get_text(strip=True).rstrip('.').strip()
-        try:
-            current_num = int(num_text)
-            last_section_num[0] = current_num  # Update the counter to this new number
-        except ValueError:
-            current_num = num_text
+    # Handle different section number formats
+    if num_text.startswith('(') and num_text.endswith(')'):
+        # Subsection like (1) or (a)
+        num = num_text.strip('()')
+        section_type = 'subsection'
+    elif '.' in num_text:
+        # Main section like "1." or "3D."
+        num = num_text.rstrip('.')
+        section_type = 'main'
     else:
-        last_section_num[0] += 1
-        current_num = last_section_num[0]
+        num = num_text
+        section_type = 'other'
+        
+    return num, section_type
 
-    content = extract_section_content(section_div)
-
+def extract_section_data(section_div, current_main_section=None):
+    """Extract section data using HTML IDs for accurate section numbering"""
+    # Get section ID from the HTML
+    section_id = section_div.get('id', '')
+    if not section_id:
+        return None
+    
+    # Parse section number from ID (e.g., "sec_3" -> "3")
+    main_section = section_id.split('_')[1] if section_id.startswith('sec_') else None
+    
+    # Get section title
+    title_tag = section_div.find(['h2', 'h3'])
+    if not title_tag:
+        return None
+    
+    title = title_tag.get_text(strip=True)
+    if title.startswith(f"{main_section}."):
+        title = title[len(f"{main_section}."):]
+    title = title.strip()
+    # Process content based on structure
+    content = []
+    
+    # Handle subsections
+    subsections = section_div.find_all('section', class_='akn-subsection')
+    if subsections:
+        for subsec in subsections:
+            subsec_content = process_subsection(subsec)
+            if subsec_content:
+                content.append(subsec_content)
+    else:
+        # Direct content if no subsections
+        main_content = extract_section_content(section_div)
+        if main_content:
+            content.append(main_content)
+    
     return {
-        "section": str(current_num), 
-        "title": section_title_text,
-        "text": content,
-        "source_url": section_div.find('a', class_='source-url')['href'] if section_div.find('a', class_='source-url') else None
+        "section": main_section,
+        "section_type": "main",
+        "title": title,
+        "text": clean_text(" ".join(content)),
     }
 
 def extract_section_content(section_div):
-    """Extract section content including all nested elements"""
-    content = []
-
-    # Process all direct child sections (like akn-subsection, akn-paragraph)
-    # Use recursive=False to only get immediate children
-    child_sections = section_div.find_all('section', recursive=False)
-    for child_sec in child_sections:
-        paragraph_content = []
-
-        # Extract text from akn-intro, if present
-        intro = child_sec.find('span', class_=['akn-intro', 'akn-content'])
-        if intro:
-            intro_text = intro.get_text(strip=True)
-            if intro_text:
-                paragraph_content.append(intro_text)
-
-        # Extract text from akn-paragraph, if present
-        # This finds any section with class akn-paragraph that is a direct child of child_sec
-        para_blocks = child_sec.find_all('section', class_='akn-paragraph', recursive=False)
-        for para_block in para_blocks:
-            # Get the paragraph letter (a), (b), etc.
-            num_tag = para_block.find('span', class_='akn-num')
-            # Get the paragraph content
-            content_span = para_block.find('span', class_='akn-content')
-            if content_span:
-                para_text = content_span.get_text(strip=True)
-                if num_tag and para_text:
-                    paragraph_content.append(f"{num_tag.get_text(strip=True)} {para_text}")
-                elif para_text:
-                    paragraph_content.append(para_text)
-
-        # If we found content for this child section, join it and add to main content
-        if paragraph_content:
-            content.append(" ".join(paragraph_content))
-
-    # Also check if there is any direct akn-content in the main section (for simpler sections)
+    """Extract section content with improved text cleaning"""
+    content_parts = []
+    
+    # Process direct content
     direct_content = section_div.find('span', class_='akn-content', recursive=False)
     if direct_content:
-        text = direct_content.get_text(strip=True)
-        if text:
-            content.append(text)
-
-    return " ".join(filter(None, content))
+        content_parts.append(extract_content_block(direct_content))
+    
+    # Process subsections
+    for subsec in section_div.find_all('section', class_='akn-subsection', recursive=False):
+        subsec_content = process_subsection(subsec)
+        if subsec_content:
+            content_parts.append(subsec_content)
+    
+    # Process paragraphs
+    for para in section_div.find_all('section', class_='akn-paragraph', recursive=False):
+        para_content = process_paragraph_block(para)
+        if para_content:
+            content_parts.append(para_content)
+    
+    return " ".join(filter(None, content_parts))
 
 def process_paragraph_block(para_block):
     """Process an akn-paragraph block and its content"""
@@ -162,38 +199,53 @@ def process_paragraph_block(para_block):
     return " ".join(content_parts)
 
 def process_subsection(subsec):
-    """Process a subsection and its nested elements"""
-    content = []
-
-    # Get subsection header
+    """Process a subsection with improved ID-based handling"""
+    subsec_id = subsec.get('id', '')
+    if not subsec_id:
+        return None
+    
+    content_parts = []
+    
+    # Get subsection number
     num_tag = subsec.find('span', class_='akn-num')
     if num_tag:
-        num_text = num_tag.get_text(strip=True).strip('()')
-        content.append(f"({num_text})")
-
-    # Get main subsection content
-    subsec_content_div = subsec.find('span', class_='akn-content')
-    if subsec_content_div:
-        text = subsec_content_div.get_text(strip=True)
-        if text:
-            content.append(text)
-
-    return " ".join(filter(None, content))
+        content_parts.append(num_tag.get_text(strip=True))
+    
+    # Process main content
+    content_span = subsec.find('span', class_='akn-content')
+    if content_span:
+        # Process paragraphs within content
+        paragraphs = content_span.find_all('span', class_='akn-p')
+        if paragraphs:
+            for para in paragraphs:
+                para_text = clean_text(extract_content_block(para))
+                if para_text:
+                    content_parts.append(para_text)
+        else:
+            # Direct content if no paragraphs
+            content_text = clean_text(extract_content_block(content_span))
+            if content_text:
+                content_parts.append(content_text)
+    
+    return " ".join(content_parts)
 
 def extract_content_block(element):
-    """Extract clean text content from an element"""
+    """Extract clean text content with improved term handling"""
     if not element:
         return ""
-        
+    
     content = []
     
-    # Get all text nodes, excluding specific classes
     for node in element.descendants:
-        if node.name is None and node.string and node.string.strip():
+        if node.name is None and node.string:  # Text node
             text = node.string.strip()
-            if text and not any(c in node.parent.get('class', []) for c in ['akn-num', 'akn-remark']):
+            if text:
                 content.append(text)
-                    
+        elif node.name == 'span' and 'akn-term' in node.get('class', []):
+            # Handle terms with proper spacing
+            term_text = node.get_text(strip=True)
+            content.append(f" {term_text} ")
+    
     return " ".join(content).strip()
 
 def extract_schedules(soup):
@@ -316,7 +368,7 @@ if __name__ == "__main__":
 
         # Save outputs
         act_slug = metadata["title"].replace(" ", "_").lower()
-        save_to_text(sections, metadata, f"{act_slug}.txt")
+        # save_to_text(sections, metadata, f"{act_slug}.txt")
         save_to_json(sections, metadata, f"{act_slug}.json")
 
     print("✅ Scraping completed.")
