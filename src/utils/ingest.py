@@ -4,10 +4,8 @@ import glob
 from typing import List, Dict, Any, Optional
 from tqdm import tqdm
 from dataclasses import dataclass
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-
-# ... existing imports ...
 
 @dataclass
 class LegalSection:
@@ -16,17 +14,25 @@ class LegalSection:
     title: str
     content: str
     metadata: Dict[str, Any]
+    
+@dataclass
+class ChunkingConfig:
+    """Configuration for chunking strategy"""
+    max_chunk_size: int = 2000  # Maximum size for a single chunk
+    min_chunk_size: int = 100   # Minimum size for a chunk to be meaningful
+    preferred_chunk_size: int = 800  # Target size for optimal chunks
+
 
 class LegalDocumentIngester:
     def __init__(
         self,
         json_dir: str = "./data/clean",
         vectorstore_dir: str = "./vectorstore/faiss_index",
-        chunk_size: int = 800
+        chunking_config: Optional[ChunkingConfig] = None
     ):
         self.json_dir = json_dir
         self.vectorstore_dir = vectorstore_dir
-        self.chunk_size = chunk_size
+        self.chunking_config = chunking_config or ChunkingConfig()
         os.makedirs(vectorstore_dir, exist_ok=True)
 
     def normalize_document(self, doc: Dict) -> Dict:
@@ -78,7 +84,6 @@ class LegalDocumentIngester:
             # Create section title
             title = section.get('title', '').strip()
             if not title and content:
-                # Use first line as title if none provided
                 title = content.split('\n')[0][:100]
 
             # Combine metadata
@@ -100,8 +105,56 @@ class LegalDocumentIngester:
             print(f"❌ Error processing section: {e}")
             return None
 
+    def split_section_if_needed(self, section: LegalSection) -> List[LegalSection]:
+        """Smart splitting of large sections while preserving context"""
+        content = section.content
+        if len(content) <= self.chunking_config.max_chunk_size:
+            return [section]
+
+        # Split into subsections if present
+        subsections = []
+        current_subsection = []
+        current_size = 0
+
+        # Look for subsection markers like (1), (2), (a), (b)
+        import re
+        subsection_pattern = r'\([0-9a-zA-Z]+\)'
+        parts = re.split(f'({subsection_pattern})', content)
+
+        for i, part in enumerate(parts):
+            if re.match(subsection_pattern, part):
+                # This is a subsection marker
+                if current_subsection and current_size >= self.chunking_config.min_chunk_size:
+                    subsections.append("".join(current_subsection))
+                    current_subsection = []
+                    current_size = 0
+                current_subsection.append(part)
+                current_size += len(part)
+            elif part.strip():
+                current_subsection.append(part)
+                current_size += len(part)
+
+        if current_subsection:
+            subsections.append("".join(current_subsection))
+
+        # Create new LegalSection objects for each subsection
+        return [
+            LegalSection(
+                id=f"{section.id}_part_{i+1}",
+                title=f"{section.title} (Part {i+1})",
+                content=subsec.strip(),
+                metadata={
+                    **section.metadata,
+                    "is_partial": True,
+                    "part_number": i + 1,
+                    "total_parts": len(subsections)
+                }
+            )
+            for i, subsec in enumerate(subsections)
+        ]
+
     def prepare_sections(self, documents: List[Dict]) -> List[LegalSection]:
-        """Extract and prepare all sections from documents"""
+        """Extract and prepare all sections with improved chunking"""
         sections = []
         
         print("📑 Processing document sections...")
@@ -112,7 +165,9 @@ class LegalDocumentIngester:
             for section in doc['sections']:
                 legal_section = self.process_section(section, doc_metadata)
                 if legal_section:
-                    sections.append(legal_section)
+                    # Apply smart chunking
+                    chunked_sections = self.split_section_if_needed(legal_section)
+                    sections.extend(chunked_sections)
                     doc_metadata['processed_sections'].append(legal_section.id)
         
         return sections
@@ -127,15 +182,18 @@ class LegalDocumentIngester:
         )
 
     def create_search_document(self, section: LegalSection) -> Dict:
-        """Create a formatted document for search"""
-        # Create a well-structured text that preserves context
-        text = f"""
-Act: {section.metadata['act']}
-Chapter: {section.metadata['chapter']}
-Section {section.metadata['section_number']}: {section.title}
+        """Create a formatted document for search with improved context"""
+        # Add section context
+        context_prefix = ""
+        if section.metadata.get("is_partial"):
+            context_prefix = f"[Part {section.metadata['part_number']} of {section.metadata['total_parts']}] "
 
-{section.content}
-""".strip()
+        text = f"""
+            Act: {section.metadata['act']}
+            Chapter: {section.metadata['chapter']}
+            Section {section.metadata['section_number']}: {section.title}
+            {context_prefix}{section.content}
+            """.strip()
 
         return {
             "text": text,
@@ -189,10 +247,8 @@ Section {section.metadata['section_number']}: {section.title}
         
         print("=== Ingestion Pipeline Complete ===")
         return vectorstore
-
-def main():
+    
+    
+if __name__ == "__main__":
     ingester = LegalDocumentIngester()
     ingester.run_pipeline()
-
-if __name__ == "__main__":
-    main()

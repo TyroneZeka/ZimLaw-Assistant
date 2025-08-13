@@ -1,0 +1,12 @@
+Goal of Chunking Optimization
+To create document chunks that are semantically meaningful, contextually complete, and aligned with the natural structure of legal documents. 
+This means one chunk per legal section (e.g., "Section 50: Rights of arrested persons") or chapter.
+
+Why Generic Chunking is Suboptimal
+  - Context Loss: A 500-character chunk might cut off the end of a section, losing critical context.
+  - Poor Retrieval: The re-ranker and LLM receive incomplete information, leading to lower-quality answers.
+  - Inefficient Re-ranking: The re-ranker has to process many small, potentially irrelevant snippets.
+The Solution: Chapter-Level Chunking
+  -Instead of splitting text by character count, use the inherent structure of the law (Chapters, Sections, Subsections) to define chunks.
+
+  

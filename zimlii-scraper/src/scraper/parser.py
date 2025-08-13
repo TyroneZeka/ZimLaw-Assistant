@@ -4,10 +4,11 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import re
 import json
 
 # Setup
-OUTPUT_DIR = "./data/raw/acts"
+OUTPUT_DIR = "./data/clean/"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 HEADERS = {
@@ -34,12 +35,14 @@ def get_page_metadata(soup, url):
     }
     
 def clean_text(text: str) -> str:
-    """Enhanced text cleaning"""
+    """Enhanced text cleaning with better term handling"""
     if not text:
         return ""
         
-    # Fix common spacing issues
+    # Fix common repetitions and spacing issues
     replacements = {
+        "Office of the Master Office of the Master": "Office of the Master",
+        "the Master Master": "the Master",
         "theacquiring authority": "the acquiring authority",
         "Theacquiring authority": "The acquiring authority",
         "acquiring authority acquiring authority": "acquiring authority",
@@ -82,11 +85,21 @@ def scrape_zimlii_act(url):
                 current_main_section = section_data['section']
             sections.append(section_data)
     
+    #TODO
+    #Remove section_type from sections
+    for section in sections:
+        section.pop("section_type", None)
+
+    #TODO: if section[text] is empty string remove section
+    sections = [section for section in sections if section.get("text") != ""]
+    
+
     # Process schedules
-    schedules = extract_schedules(soup)
-    if schedules:
-        sections.extend(schedules)
-        
+    # schedules = extract_schedules(soup)
+    # if schedules:
+    #     sections.extend(schedules)
+    
+            
     print(f"✅ Successfully extracted {len(sections)} sections")
     return sections, metadata
 
@@ -113,68 +126,116 @@ def extract_section_number(section_div) -> tuple:
         
     return num, section_type
 
+def extract_section_number_from_title(title_text: str) -> str:
+    """Extract section number from title text"""
+    # Remove any HTML tags first
+    import re
+    
+    # Match patterns like "3.", "12.", "3D."
+    match = re.match(r'^(\d+[A-Z]?)\.*\s*', title_text)
+    if match:
+        return match.group(1)
+    return None
+
+def clean_title_text(title_element) -> str:
+    """Clean title text while preserving proper spacing between terms"""
+    if not title_element:
+        return ""
+    
+    # Process each part of the title to maintain proper spacing
+    parts = []
+    for element in title_element.children:
+        if element.name is None:  # Text node
+            text = element.string.strip() if element.string else ""
+            parts.append(text)
+        elif element.name == 'span':
+            # Handle terms and other spans
+            term_text = element.get_text(strip=True)
+            # Add appropriate spacing around terms
+            if term_text:
+                parts.append(term_text)
+    
+    # Join parts and fix multiple spaces
+    title = ' '.join(parts)
+    # Fix multiple spaces and other common issues
+    title = re.sub(r'\s+', ' ', title)  # Fix multiple spaces
+    title = re.sub(r'\s*,\s*', ', ', title)  # Fix comma spacing
+    title = re.sub(r'\s*\'\s*', "'", title)  # Fix apostrophe spacing
+    
+    return title.strip()
+
 def extract_section_data(section_div, current_main_section=None):
     """Extract section data using HTML IDs for accurate section numbering"""
     # Get section ID from the HTML
     section_id = section_div.get('id', '')
-    if not section_id:
-        return None
+    main_section = None
     
-    # Parse section number from ID (e.g., "sec_3" -> "3")
-    main_section = section_id.split('_')[1] if section_id.startswith('sec_') else None
+    # Try getting section number from ID first
+    if section_id and section_id.startswith('sec_'):
+        main_section = section_id.split('_')[1]
     
-    # Get section title
+    # Get section title and clean it
     title_tag = section_div.find(['h2', 'h3'])
     if not title_tag:
         return None
     
-    title = title_tag.get_text(strip=True)
-    if title.startswith(f"{main_section}."):
-        title = title[len(f"{main_section}."):]
-    title = title.strip()
-    # Process content based on structure
-    content = []
+    # Clean the title text properly
+    full_title = clean_title_text(title_tag)
     
-    # Handle subsections
-    subsections = section_div.find_all('section', class_='akn-subsection')
-    if subsections:
-        for subsec in subsections:
-            subsec_content = process_subsection(subsec)
-            if subsec_content:
-                content.append(subsec_content)
-    else:
-        # Direct content if no subsections
-        main_content = extract_section_content(section_div)
-        if main_content:
-            content.append(main_content)
+    # If we don't have a section number from ID, try to get it from the title
+    if not main_section:
+        main_section = extract_section_number_from_title(full_title)
+    
+    # If we still don't have a section number, try the current_main_section
+    if not main_section:
+        main_section = current_main_section
+    
+    # If we still don't have a section number, check for num tag
+    if not main_section:
+        num_tag = section_div.find('span', class_='akn-num')
+        if num_tag:
+            num_text = num_tag.get_text(strip=True)
+            if num_text.endswith('.'):
+                main_section = num_text.rstrip('.')
+    
+    if not main_section:
+        return None
+    
+    # Remove section number from title if present
+    title = re.sub(f'^{main_section}\\.\\s*', '', full_title).strip()
+    content = extract_section_content(section_div)
     
     return {
         "section": main_section,
         "section_type": "main",
         "title": title,
-        "text": clean_text(" ".join(content)),
+        "text": clean_text(content),
     }
 
 def extract_section_content(section_div):
-    """Extract section content with improved text cleaning"""
+    """Extract section content without duplicating subsections"""
     content_parts = []
     
-    # Process direct content
-    direct_content = section_div.find('span', class_='akn-content', recursive=False)
-    if direct_content:
-        content_parts.append(extract_content_block(direct_content))
+    # Get section number if present
+    num_tag = section_div.find('span', class_='akn-num', recursive=False)
+    if num_tag:
+        content_parts.append(num_tag.get_text(strip=True))
     
-    # Process subsections
-    for subsec in section_div.find_all('section', class_='akn-subsection', recursive=False):
-        subsec_content = process_subsection(subsec)
-        if subsec_content:
-            content_parts.append(subsec_content)
+    # Process main content first
+    content_span = section_div.find('span', class_='akn-content', recursive=False)
+    if content_span:
+        # Only process direct paragraph children
+        for para in content_span.find_all('span', class_='akn-p', recursive=False):
+            para_text = extract_content_block(para)
+            if para_text:
+                content_parts.append(para_text)
     
-    # Process paragraphs
-    for para in section_div.find_all('section', class_='akn-paragraph', recursive=False):
-        para_content = process_paragraph_block(para)
-        if para_content:
-            content_parts.append(para_content)
+    # Process subsections if no direct content
+    if not content_parts:
+        for subsec in section_div.find_all('section', class_='akn-subsection', recursive=False):
+            subsec_content = process_subsection(subsec)
+            if subsec_content:
+                content_parts.append(subsec_content)
     
     return " ".join(filter(None, content_parts))
 
@@ -199,41 +260,42 @@ def process_paragraph_block(para_block):
     return " ".join(content_parts)
 
 def process_subsection(subsec):
-    """Process a subsection with improved ID-based handling"""
-    subsec_id = subsec.get('id', '')
-    if not subsec_id:
+    """Process a subsection without duplicating content"""
+    if not subsec:
         return None
     
     content_parts = []
     
     # Get subsection number
-    num_tag = subsec.find('span', class_='akn-num')
+    num_tag = subsec.find('span', class_='akn-num', recursive=False)
     if num_tag:
         content_parts.append(num_tag.get_text(strip=True))
     
-    # Process main content
-    content_span = subsec.find('span', class_='akn-content')
+    # Process content directly from akn-content
+    content_span = subsec.find('span', class_='akn-content', recursive=False)
     if content_span:
-        # Process paragraphs within content
-        paragraphs = content_span.find_all('span', class_='akn-p')
+        # Only process direct paragraph children
+        paragraphs = content_span.find_all('span', class_='akn-p', recursive=False)
         if paragraphs:
             for para in paragraphs:
-                para_text = clean_text(extract_content_block(para))
+                para_text = extract_content_block(para)
                 if para_text:
                     content_parts.append(para_text)
         else:
-            # Direct content if no paragraphs
-            content_text = clean_text(extract_content_block(content_span))
+            # If no paragraphs, process content directly
+            content_text = extract_content_block(content_span)
             if content_text:
                 content_parts.append(content_text)
     
     return " ".join(content_parts)
 
 def extract_content_block(element):
-    """Extract clean text content with improved term handling"""
+    """Extract clean text content without duplicating terms"""
     if not element:
         return ""
     
+    # Store processed terms to avoid duplication
+    processed_terms = set()
     content = []
     
     for node in element.descendants:
@@ -241,10 +303,18 @@ def extract_content_block(element):
             text = node.string.strip()
             if text:
                 content.append(text)
-        elif node.name == 'span' and 'akn-term' in node.get('class', []):
-            # Handle terms with proper spacing
-            term_text = node.get_text(strip=True)
-            content.append(f" {term_text} ")
+        elif node.name == 'span':
+            if 'akn-term' in node.get('class', []):
+                # Get term ID to avoid duplicates
+                term_id = node.get('id', '')
+                if term_id not in processed_terms:
+                    term_text = node.get_text(strip=True)
+                    content.append(term_text)
+                    processed_terms.add(term_id)
+            elif 'akn-p' not in node.get('class', []):  # Skip paragraph spans as they're handled separately
+                text = node.get_text(strip=True)
+                if text:
+                    content.append(text)
     
     return " ".join(content).strip()
 
@@ -360,7 +430,7 @@ def save_to_json(sections, metadata, filename):
 # === MAIN ===
 if __name__ == "__main__":
     # Test with Dangerous Drugs Act
-    URL = "https://zimlii.org/akn/zw/act/2004/7/eng@2016-12-31"
+    URL = "https://zimlii.org/akn/zw/act/ord/1907/6/eng@2025-02-24"
 
     result = scrape_zimlii_act(URL)
     if result:
@@ -368,7 +438,6 @@ if __name__ == "__main__":
 
         # Save outputs
         act_slug = metadata["title"].replace(" ", "_").lower()
-        # save_to_text(sections, metadata, f"{act_slug}.txt")
         save_to_json(sections, metadata, f"{act_slug}.json")
 
     print("✅ Scraping completed.")
