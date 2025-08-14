@@ -1,4 +1,5 @@
 import os
+from tempfile import template
 import numpy as np
 from sentence_transformers import CrossEncoder
 from langchain.schema import Document
@@ -14,11 +15,11 @@ class ZimLawRAGChain:
     def __init__(
         self,
         vectorstore_dir: str = "./vectorstore/faiss_index",
-        model_name: str = "llama3",  # Options: 'deepseek', 'llama2', 'llama3'
+        model_name: str = "deepseek",  # Options: 'deepseek', 'llama2', 'llama3'
         model_path: str = None,
         temperature: float = 0.1,
-        max_tokens: int = 1000,
-        top_k: int = 5,  # Increased initial retrieval
+        max_tokens: int = 1200,
+        top_k: int = 10,  # Increased initial retrieval
         final_k: int = 4,  # Number of documents after re-ranking
         reranker_model: str = "BAAI/bge-reranker-base", # Can use large with more mem
         enable_query_rewriting: bool = True
@@ -71,9 +72,12 @@ class ZimLawRAGChain:
         2. Use appropriate legal terminology from Zimbabwean law
         3. Make the query more specific and actionable
         4. Preserve the original intent of the question
-        5. Focus on relevant acts and sections that might contain the answer
+        5. Do not assume Acts, Chapters, or sections of the legislation unless otherwise stated in the original query
+        6. Use clear and concise language and limit to 200 words
+        7. Respond by only giving the rewritten query, nothing more!
 
-        Rewritten Query:"""
+        Rewritten Query:
+        """
     
     def _rewrite_query(self, query: str) -> Tuple[str, str]:
         """Rewrites the user query into a more formal legal query"""
@@ -102,35 +106,36 @@ class ZimLawRAGChain:
         except Exception as e:
             print(f"❌ Error in query rewriting: {str(e)}")
             return query, None
-    
-        
+     
     def _create_prompt_template(self) -> PromptTemplate:
-        """Updated prompt template to include both original and rewritten queries"""
-        template = """You are a legal assistant specialized in Zimbabwean law. Your role is to provide accurate, clear, and well-referenced legal information.
-
-        Original Question: {original_question}
-        Formal Legal Query: {question}
-
-        Relevant legal context:
+        """Create an improved prompt template for legal Q&A"""
+        template = """You are a precise and reliable legal assistant for Zimbabwean law. Your task is to answer the user's question using ONLY the information provided in the "Relevant legal context" section.
+    
+        ## User Question
+        {question}
+    
+        ## Relevant Legal Context
         {context}
-
-        Instructions:
-        1. Answer the original question using the legal context
-        2. Cite specific sections and acts
-        3. Use clear, simple language while maintaining legal accuracy
-        4. Structure your answer with clear headings and bullet points
-        5. If rights or procedures are listed, enumerate them
-        6. Provide cross-references when relevant
-
-        Your professional legal response:"""
+    
+        ## Instructions
+        1. **Answer Directly First:** Begin with a clear, concise answer to the user's question. If the context does not contain enough information, state: "I cannot answer that question based on the provided information."
+        2. **Cite Sources Explicitly:** For every fact or right mentioned in your answer, cite the specific source. Use the format: "[Act Name, Section X]" or "[Constitution, Section Y]". Do not invent citations. ONLY USE THE SOURCES FROM THE CONTEXT PROVIDED
+        3. **Structure Your Response:** Organize your answer into the following sections:
+            - **Direct Answer:** A brief, direct response to the question.
+            - **Legal Basis:** A summary of the relevant law, quoting key phrases if necessary, with full citations.
+            - **Key Rights/Procedures:** If the law enumerates rights or procedures, list them clearly as bullet points, each with its citation.
+            - **Additional Notes:** Mention any related sections or acts that might be relevant for further research, but only if they are mentioned in the context.
+        4. **Be Comprehensive but Concise:** Do not omit any relevant information from the context, but avoid unnecessary verbosity.
+        5. **Do NOT Speculate:** If a part of the law is missing from the context, do not guess what it says. Simply state that the information is not available in the provided context.
+    
+        ## Your Response
+        """
 
         return PromptTemplate(
             template=template,
-            input_variables=["context", "question", "original_question"]
+            input_variables=["context", "question"]
         )
-    
-    
-    
+        
     def _get_reranker(self):
         """Lazy loading of the re-ranker model"""
         if self._reranker is None:
@@ -164,18 +169,6 @@ class ZimLawRAGChain:
         
         print(f"🔄 Re-ranked {len(docs)} documents to select top {len(reranked_docs)}")
         return reranked_docs
-
-    def _create_retriever(self):
-        """Create the retriever with improved search parameters"""
-        return self.vectorstore.as_retriever(
-            search_kwargs={
-                "k": self.top_k,
-                "fetch_k": self.top_k * 2,  # Fetch more for diversity
-                "lambda_mult": 0.3,  # MMR diversity factor
-                "score_threshold": 0.5,
-            },
-            search_type="mmr"  # Use MMR for initial diversity
-        )
 
     def _load_vectorstore(self) -> FAISS:
         """Load the FAISS vectorstore"""
@@ -224,35 +217,6 @@ class ZimLawRAGChain:
             search_type="similarity_score_threshold"  # Use MMR for diverse results
         )
 
-    def _create_prompt_template(self) -> PromptTemplate:
-        """Create an improved prompt template for legal Q&A"""
-        template = """You are a legal assistant specialized in Zimbabwean law. Your role is to provide accurate, clear, and well-referenced legal information based on official legal documents.
-
-        Question: {question}
-
-        Relevant legal context:
-        {context}
-
-        Instructions:
-        1. Analyze ALL provided legal sections thoroughly
-        2. Cite EVERY relevant section number and act name
-        3. Structure your answer with clear headings and bullet points
-        4. If rights or procedures are listed in the law, enumerate them all
-        5. Provide your answer in 4 parts:
-            - Immediate answer to the question
-            - Summary of relevant legal sections
-            - List of rights or procedures mentioned in the law
-            - Additional relevant sections or acts and suggestions for further reading
-        5. Include cross-references between sections when relevant
-        6. If the context is incomplete, indicate what additional legal sections might be relevant
-
-        Your professional legal response:"""
-
-        return PromptTemplate(
-            template=template,
-            input_variables=["context", "question"]
-        )
-
     def _create_chain(self) -> RetrievalQA:
         """Create the RAG chain with the prompt template"""
         return RetrievalQA.from_chain_type(
@@ -272,25 +236,24 @@ class ZimLawRAGChain:
             print(f"\n❓ Received question: {question}")
             
             # 1. Rewrite the query
-            rewritten_query, original_query = self._rewrite_query(question)
+            # rewritten_query, original_query = self._rewrite_query(question)
             
             # 2. Initial retrieval with rewritten query
-            initial_docs = self.retriever.get_relevant_documents(
-                rewritten_query, 
+            initial_docs = self.retriever.invoke(
+                question, 
                 k=self.top_k
             )
             print(f"📚 Retrieved {len(initial_docs)} initial documents")
             
             # 3. Re-rank documents
-            reranked_docs = self._rerank_documents(rewritten_query, initial_docs)
+            reranked_docs = self._rerank_documents(question, initial_docs)
             
             # 4. Create context from reranked documents
             context = "\n\n".join([doc.page_content for doc in reranked_docs])
             
             # 5. Generate answer using both queries
             result = self.chain.invoke({
-                "query": rewritten_query,
-                "original_question": original_query or question,
+                "query": question,
                 "context": context
             })
             
@@ -306,8 +269,7 @@ class ZimLawRAGChain:
                 })
             
             return {
-                "original_question": original_query or question,
-                "rewritten_query": rewritten_query,
+                "question": question,
                 "answer": result.get("result", "No answer generated"),
                 "sources": sources
             }
@@ -325,17 +287,17 @@ def main():
     rag_chain = ZimLawRAGChain()
     
     test_questions = [
-        "What are my constitutional rights if I'm arrested?",
-        "Can my boss fire me for being late?"
+        "What are my constitutional rights if I'm arrested or detained?",
+        "Can my boss fire me for being late?",
         "What is the process for registering a trade union?",
         "What are the requirements for fair dismissal under the Labour Act?",
-        "What are the fundamental rights protected in Chapter 4 of the Constitution?"
+        "How can I legally change my name in Zimbabwe?"
     ]
     
     for question in test_questions:
         result = rag_chain.answer_question(question)
         print("\n" + "="*80)
-        print(f"Question: {result['original_question']}")
+        print(f"Question: {result['question']}")
         print(f"Answer: {result['answer']}")
         if "sources" in result:
             print("\nSources:")

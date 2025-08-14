@@ -2,102 +2,59 @@ import streamlit as st
 from utils.rag_chain import ZimLawRAGChain
 import time
 from typing import Dict, Any
+from PIL import Image
 
-# Initialize the RAG chain
 @st.cache_resource
 def initialize_rag_chain() -> ZimLawRAGChain:
     """Initialize and cache the RAG chain"""
     return ZimLawRAGChain()
 
-# Custom CSS for modern UI
+# Custom CSS for dark theme UI
 st.markdown("""
 <style>
-    /* Modern container styling */
+    /* Dark theme styling */
     .stApp {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-        background-color: #f8f9fa;
+        background-color: #1E1E1E;
+        color: white;
     }
     
-    /* Thinking process styling */
-    .thinking-process {
-        color: #6c757d;
-        font-size: 0.9em;
-        font-family: monospace;
-        padding: 1rem;
-        background: #f1f3f5;
-        border-radius: 0.5rem;
-        margin: 1rem 0;
+    .stTextInput, .stTextArea {
+        background-color: #333;
+        color: white;
+        border-radius: 8px;
     }
     
-    /* Response container styling */
-    .response-container {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin: 1rem 0;
-    }
-    
-    /* Sources styling */
     .source-item {
-        border-left: 3px solid #007bff;
-        padding-left: 1rem;
+        background-color: #333;
+        padding: 1rem;
+        border-radius: 8px;
         margin: 0.5rem 0;
+    }
+    
+    .chat-container {
+        background-color: #333;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 24px auto;
+        color: white;
+    }
+    
+    .action-button {
+        background-color: #333;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+        margin: 4px;
+    }
+    
+    .sidebar {
+        background-color: #1E1E1E;
+        padding: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)
-
-def stream_response(text: str):
-    """Simulate streaming response"""
-    response = st.empty()
-    displayed_text = ""
-    
-    for word in text.split():
-        displayed_text += word + " "
-        response.markdown(displayed_text + "▌")
-        time.sleep(0.05)
-    
-    response.markdown(displayed_text)
-
-def process_answer(result: Dict[str, Any]) -> None:
-    """Process and display the answer with sources"""
-    if "error" in result:
-        st.error(f"Error: {result['error']}")
-        return
-
-    # Show thinking process
-    with st.expander("🤔 View thinking process", expanded=False):
-        st.markdown('<div class="thinking-process">', unsafe_allow_html=True)
-        st.markdown("""
-        1. Analyzing question...
-        2. Searching relevant legal documents...
-        3. Extracting key sections...
-        4. Formulating response...
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # Display the streamed answer
-    st.markdown('<div class="response-container">', unsafe_allow_html=True)
-    st.markdown("### 📝 Answer")
-    stream_response(result["answer"])
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Display sources
-    with st.expander("📚 View Sources", expanded=True):
-        st.markdown("### Referenced Legal Sections")
-        if "sources" in result and result["sources"]:
-            for source in result["sources"]:
-                st.markdown(f"""
-                <div class="source-item">
-                    <strong>{source['act']}</strong><br>
-                    Chapter: {source['chapter']}<br>
-                    Section {source['section']}: {source['title']}
-                </div>
-                """, unsafe_allow_html=True)
-        else:
-            st.info("No specific sources were cited for this answer.")
 
 def main():
     # Page config
@@ -105,67 +62,115 @@ def main():
         page_title="ZimLaw Assistant",
         page_icon="⚖️",
         layout="wide",
-        initial_sidebar_state="collapsed"
+        initial_sidebar_state="expanded"
     )
     
-    # Two-column layout
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        # Main content
-        st.title("⚖️ ZimLaw Assistant")
-        st.markdown("""
-        <p style='font-size: 1.2em; color: #666;'>
-        Your AI-powered guide to Zimbabwean law
-        </p>
-        """, unsafe_allow_html=True)
-        
-        # Initialize RAG chain
+    # Sidebar
+    with st.sidebar:
+        # Logo and title
         try:
-            rag_chain = initialize_rag_chain()
-        except Exception as e:
-            st.error(f"Failed to initialize the legal assistant: {str(e)}")
-            return
-        
-        # User input section
-        st.markdown('<div style="margin: 2rem 0;">', unsafe_allow_html=True)
-        user_question = st.text_area(
-            "What would you like to know about Zimbabwean law?",
-            height=100,
-            placeholder="Example: What are my rights if I'm arrested?"
-        )
-        
-        if st.button("Get Answer", type="primary"):
-            if not user_question:
-                st.warning("Please enter a question.")
-                return
+            logo_image = Image.open("./screenshots/logo.png")
+            st.image(logo_image, width=50)
+        except:
+            st.markdown("⚖️")  # Fallback if logo not found
+            
+        st.markdown("<h3 style='text-align: center; color: white;'>ZimLaw Assistant</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; color: gray;'>Powered by Deepseek</p>", unsafe_allow_html=True)
+
+        # New Chat Button
+        if st.button("New Chat", key="new_chat_button"):
+            st.session_state.clear()
+
+        # Search Bar
+        st.text_input("Search Previous Chats", placeholder="Search", key="search_input")
+
+        # Chat History
+        st.markdown("<h4 style='color: white;'>Recent Conversations</h4>", unsafe_allow_html=True)
+        st.markdown("- Rights of Arrested Persons")
+        st.markdown("- Employment Contract Terms")
+        st.markdown("- Property Rights in Zimbabwe")
+
+        # User Profile
+        st.markdown("---")
+        try:
+            user_profile_image = Image.open("user_profile.png")
+            st.image(user_profile_image, width=30)
+        except:
+            st.markdown("👤")  # Fallback if profile image not found
+        st.markdown("<p style='color: white;'>Legal Assistant</p>", unsafe_allow_html=True)
+
+    # Main Content Area
+    try:
+        rag_chain = initialize_rag_chain()
+    except Exception as e:
+        st.error(f"Failed to initialize the legal assistant: {str(e)}")
+        return
+
+    # Greeting and Main Interface
+    st.markdown("<h2 style='text-align: center; color: white;'>Your AI Legal Assistant</h2>", unsafe_allow_html=True)
+
+    # Message Input
+    user_question = st.text_area(
+        "",  # Remove label
+        placeholder="Ask me anything about Zimbabwean law...",
+        height=150,
+        width=2000,
+        key="user_input"
+    )
+
+    # Interactive Elements
+    col1, col2, col3, col4 = st.columns([1,1,1,1])
+    with col1:
+        st.markdown("<div class='action-button'>Criminal Law</div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("<div class='action-button'>Civil Rights</div>", unsafe_allow_html=True)
+    with col3:
+        st.markdown("<div class='action-button'>Labour Law</div>", unsafe_allow_html=True)
+    with col4:
+        st.markdown("<div class='action-button'>More</div>", unsafe_allow_html=True)
+
+    # Process Question
+    if user_question:
+        with st.container():
+            st.markdown(f"""
+            <div class='chat-container'>
+                <p><strong>You:</strong> {user_question}</p>
+            </div>
+            """, unsafe_allow_html=True)
             
             try:
                 with st.spinner(""):
                     result = rag_chain.answer_question(user_question)
-                    process_answer(result)
+                    
+                    # Display answer in chat style
+                    st.markdown(f"""
+                    <div class='chat-container'>
+                        <p><strong>Assistant:</strong> {result["answer"]}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Sources in collapsible
+                    with st.expander("📚 View Sources", expanded=False):
+                        if "sources" in result and result["sources"]:
+                            for source in result["sources"]:
+                                st.markdown(f"""
+                                <div class="source-item">
+                                    <strong>{source['act']}</strong><br>
+                                    Chapter: {source['chapter']}<br>
+                                    Section {source['section']}: {source['title']}
+                                </div>
+                                """, unsafe_allow_html=True)
+                        else:
+                            st.info("No specific sources were cited for this answer.")
+                            
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
-    
-    with col2:
-        # Sidebar content now in second column
-        st.markdown("""
-        ### 🔍 Quick Links
-        - [Constitution of Zimbabwe](https://www.constituteproject.org/constitution/Zimbabwe_2013.pdf)
-        - [Labour Act](https://www.ilo.org/dyn/natlex/docs/ELECTRONIC/1850/76997/F1436867346/ZWE1850.pdf)
-        - [Legal Resources](https://zimlii.org/)
-        
-        ### 📱 Get Help
-        - Legal Aid Hotline: 116
-        - Emergency: 112
-        """)
-    
+
     # Footer
     st.markdown("---")
     st.markdown("""
-    <div style='text-align: center; color: #666; padding: 1rem;'>
-        ⚠️ <em>This is an AI-powered legal information tool. The information provided should not be considered as legal advice. 
-        For specific legal matters, please consult with a qualified legal professional.</em>
+    <div style='text-align: center; color: gray; padding: 1rem;'>
+        ⚠️ This is an AI-powered legal information tool. Not legal advice.
     </div>
     """, unsafe_allow_html=True)
 

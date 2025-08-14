@@ -85,21 +85,10 @@ def scrape_zimlii_act(url):
                 current_main_section = section_data['section']
             sections.append(section_data)
     
-    #TODO
-    #Remove section_type from sections
     for section in sections:
         section.pop("section_type", None)
-
-    #TODO: if section[text] is empty string remove section
     sections = [section for section in sections if section.get("text") != ""]
     
-
-    # Process schedules
-    # schedules = extract_schedules(soup)
-    # if schedules:
-    #     sections.extend(schedules)
-    
-            
     print(f"✅ Successfully extracted {len(sections)} sections")
     return sections, metadata
 
@@ -213,29 +202,21 @@ def extract_section_data(section_div, current_main_section=None):
     }
 
 def extract_section_content(section_div):
-    """Extract section content without duplicating subsections"""
+    """Extract section content with improved handling of nested structures"""
     content_parts = []
     
-    # Get section number if present
-    num_tag = section_div.find('span', class_='akn-num', recursive=False)
-    if num_tag:
-        content_parts.append(num_tag.get_text(strip=True))
-    
-    # Process main content first
+    # Process direct content first
     content_span = section_div.find('span', class_='akn-content', recursive=False)
     if content_span:
-        # Only process direct paragraph children
-        for para in content_span.find_all('span', class_='akn-p', recursive=False):
-            para_text = extract_content_block(para)
-            if para_text:
-                content_parts.append(para_text)
+        content = extract_content_block(content_span)
+        if content:
+            content_parts.append(content)
     
-    # Process subsections if no direct content
-    if not content_parts:
-        for subsec in section_div.find_all('section', class_='akn-subsection', recursive=False):
-            subsec_content = process_subsection(subsec)
-            if subsec_content:
-                content_parts.append(subsec_content)
+    # Process subsections
+    for subsec in section_div.find_all('section', class_='akn-subsection', recursive=False):
+        subsec_content = process_subsection(subsec)
+        if subsec_content:
+            content_parts.append(subsec_content)
     
     return " ".join(filter(None, content_parts))
 
@@ -259,8 +240,64 @@ def process_paragraph_block(para_block):
 
     return " ".join(content_parts)
 
+def process_paragraph(para):
+    """Enhanced paragraph processing with intro and subparagraphs"""
+    content_parts = []
+    
+    # Get paragraph number (a), (b), etc.
+    num_tag = para.find('span', class_='akn-num', recursive=False)
+    if num_tag:
+        content_parts.append(num_tag.get_text(strip=True))
+    
+    # Process intro text if present
+    intro = para.find('span', class_='akn-intro')
+    if intro:
+        intro_text = extract_content_block(intro)
+        if intro_text:
+            content_parts.append(intro_text)
+    
+    # Process main content
+    content_span = para.find('span', class_='akn-content')
+    if content_span:
+        content = extract_content_block(content_span)
+        if content:
+            content_parts.append(content)
+    
+    # Process subparagraphs
+    for subpara in para.find_all('section', class_='akn-subparagraph'):
+        subpara_text = process_subparagraph(subpara)
+        if subpara_text:
+            content_parts.append(subpara_text)
+    
+    # Process wrap-up text if present
+    wrapup = para.find('span', class_='akn-wrapUp')
+    if wrapup:
+        wrapup_text = extract_content_block(wrapup)
+        if wrapup_text:
+            content_parts.append(wrapup_text)
+    
+    return " ".join(content_parts)
+
+def process_subparagraph(subpara):
+    """Process subparagraphs (i), (ii), etc."""
+    content_parts = []
+    
+    # Get subparagraph number
+    num_tag = subpara.find('span', class_='akn-num', recursive=False)
+    if num_tag:
+        content_parts.append(num_tag.get_text(strip=True))
+    
+    # Get content
+    content_span = subpara.find('span', class_='akn-content')
+    if content_span:
+        content = extract_content_block(content_span)
+        if content:
+            content_parts.append(content)
+    
+    return " ".join(content_parts)
+
 def process_subsection(subsec):
-    """Process a subsection without duplicating content"""
+    """Enhanced subsection processing"""
     if not subsec:
         return None
     
@@ -271,21 +308,26 @@ def process_subsection(subsec):
     if num_tag:
         content_parts.append(num_tag.get_text(strip=True))
     
-    # Process content directly from akn-content
-    content_span = subsec.find('span', class_='akn-content', recursive=False)
-    if content_span:
-        # Only process direct paragraph children
-        paragraphs = content_span.find_all('span', class_='akn-p', recursive=False)
-        if paragraphs:
-            for para in paragraphs:
-                para_text = extract_content_block(para)
-                if para_text:
-                    content_parts.append(para_text)
-        else:
-            # If no paragraphs, process content directly
-            content_text = extract_content_block(content_span)
-            if content_text:
-                content_parts.append(content_text)
+    # Process intro text
+    intro = subsec.find('span', class_='akn-intro')
+    if intro:
+        intro_text = extract_content_block(intro)
+        if intro_text:
+            content_parts.append(intro_text)
+    
+    # Process paragraphs
+    for para in subsec.find_all('section', class_='akn-paragraph', recursive=False):
+        para_text = process_paragraph(para)
+        if para_text:
+            content_parts.append(para_text)
+    
+    # Process direct content if no paragraphs
+    if not subsec.find_all('section', class_='akn-paragraph'):
+        content_span = subsec.find('span', class_='akn-content')
+        if content_span:
+            content = extract_content_block(content_span)
+            if content:
+                content_parts.append(content)
     
     return " ".join(content_parts)
 
@@ -430,7 +472,7 @@ def save_to_json(sections, metadata, filename):
 # === MAIN ===
 if __name__ == "__main__":
     # Test with Dangerous Drugs Act
-    URL = "https://zimlii.org/akn/zw/act/ord/1907/6/eng@2025-02-24"
+    URL = "https://zimlii.org/akn/zw/act/2013/1/eng@2017-09-07"
 
     result = scrape_zimlii_act(URL)
     if result:
