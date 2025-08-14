@@ -1,6 +1,8 @@
 import os
 from tempfile import template
 import numpy as np
+from collections import defaultdict
+from rank_bm25 import BM25Okapi
 from sentence_transformers import CrossEncoder
 from langchain.schema import Document
 from typing import Dict, Any, List, Optional, Tuple
@@ -21,10 +23,14 @@ class ZimLawRAGChain:
         max_tokens: int = 1200,
         top_k: int = 10,  # Increased initial retrieval
         final_k: int = 4,  # Number of documents after re-ranking
-        reranker_model: str = "BAAI/bge-reranker-base", # Can use large with more mem
-        enable_query_rewriting: bool = True
+        reranker_model: str = "BAAI/bge-reranker-large", # Can use large with more mem
+        enable_query_rewriting: bool = True,
+        bm25_weight: float = 0.3
     ):
         # Add existing initialization parameters
+        self.bm25_weight = bm25_weight
+        self._bm25_index = None
+        self._document_store = []
         self.top_k = top_k
         self.final_k = final_k
         self.enable_query_rewriting = enable_query_rewriting
@@ -60,6 +66,102 @@ class ZimLawRAGChain:
         self.llm = self._initialize_llm()
         self.retriever = self._create_retriever()
         self.chain = self._create_chain()
+        
+    def _initialize_bm25(self):
+        """Initialize BM25 index from documents"""
+        if self._bm25_index is None:
+            print("📑 Initializing BM25 index...")
+            try:
+                # Get documents from vectorstore using similarity search
+                # Use a very large k to get all documents
+                all_docs = self.vectorstore.similarity_search(
+                    "", 
+                    k=10000  # Large enough to get all docs
+                )
+                
+                # Store documents for later reference
+                self._document_store = all_docs
+                
+                # Tokenize documents for BM25
+                tokenized_docs = [
+                    doc.page_content.lower().split() 
+                    for doc in self._document_store
+                ]
+                
+                # Create BM25 index
+                self._bm25_index = BM25Okapi(tokenized_docs)
+                print(f"✅ BM25 index initialized with {len(all_docs)} documents")
+                
+            except Exception as e:
+                print(f"❌ Error initializing BM25 index: {str(e)}")
+                raise
+            
+    def _bm25_search(self, query: str, top_k: int) -> List[Document]:
+        """Perform BM25 keyword search"""
+        self._initialize_bm25()
+        # Tokenize query
+        tokenized_query = query.lower().split()
+        # Get BM25 scores
+        bm25_scores = self._bm25_index.get_scores(tokenized_query)
+        # Get top-k document indices
+        top_indices = np.argsort(bm25_scores)[-top_k:][::-1]
+        # Return documents with scores
+        return [
+            (self._document_store[idx], bm25_scores[idx])
+            for idx in top_indices
+            if bm25_scores[idx] > 0
+        ]
+    
+    def _hybrid_search(self, query: str, top_k: int) -> List[Document]:
+        """Combine semantic and keyword search results"""
+        # Get semantic search results
+        semantic_results = self.vectorstore.similarity_search_with_score(
+            query, 
+            k=top_k
+        )
+        
+        # Get BM25 results
+        bm25_results = self._bm25_search(query, top_k)
+        
+        # Normalize scores
+        max_semantic = max(score for _, score in semantic_results) if semantic_results else 1
+        max_bm25 = max(score for _, score in bm25_results) if bm25_results else 1
+        
+        # Combine and normalize scores
+        combined_scores = defaultdict(float)
+        
+        # Add semantic scores
+        for doc, score in semantic_results:
+            normalized_score = score / max_semantic
+            combined_scores[doc.page_content] += (1 - self.bm25_weight) * normalized_score
+        
+        # Add BM25 scores
+        for doc, score in bm25_results:
+            normalized_score = score / max_bm25
+            combined_scores[doc.page_content] += self.bm25_weight * normalized_score
+        
+        # Sort by combined score
+        sorted_results = sorted(
+            combined_scores.items(), 
+            key=lambda x: x[1], 
+            reverse=True
+        )
+        
+        # Get final documents
+        final_docs = []
+        seen = set()
+        for content, score in sorted_results:
+            if len(final_docs) >= top_k:
+                break
+            
+            # Find original document
+            for doc in self._document_store:
+                if doc.page_content == content and doc.page_content not in seen:
+                    final_docs.append(doc)
+                    seen.add(doc.page_content)
+                    break
+                
+        return final_docs
         
     def _get_query_rewrite_prompt(self) -> str:
         """Returns the prompt template for query rewriting"""
@@ -239,11 +341,8 @@ class ZimLawRAGChain:
             # rewritten_query, original_query = self._rewrite_query(question)
             
             # 2. Initial retrieval with rewritten query
-            initial_docs = self.retriever.invoke(
-                question, 
-                k=self.top_k
-            )
-            print(f"📚 Retrieved {len(initial_docs)} initial documents")
+            initial_docs = self._hybrid_search(question, self.top_k)
+            print(f"📚 Retrieved {len(initial_docs)} documents using hybrid search")
             
             # 3. Re-rank documents
             reranked_docs = self._rerank_documents(question, initial_docs)
