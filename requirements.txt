@@ -4,6 +4,7 @@ ollama
 llama-index  # Optional: if you want to compare with LlamaIndex
 streamlit
 faiss-cpu
+# faiss-gpu
 datasets
 torch
 transformers
