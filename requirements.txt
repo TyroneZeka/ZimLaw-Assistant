@@ -1,5 +1,6 @@
 langchain
 langchain-community
+langchain_huggingface
 ollama
 llama-index  # Optional: if you want to compare with LlamaIndex
 streamlit
